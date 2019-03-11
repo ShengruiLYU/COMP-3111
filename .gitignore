@@ -1,0 +1,10 @@
+build/
+
+build/*
+*.class
+
+*.pdf
+
+*.DS_STORE
+.gradle
+*.zip
