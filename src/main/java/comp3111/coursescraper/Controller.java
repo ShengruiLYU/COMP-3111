@@ -79,9 +79,6 @@ public class Controller {
     @FXML
     void findInstructorSfq() {
     	buttonInstructorSfq.setDisable(true);
-    	//add code for lab5
-    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + textfieldSfqUrl.getText());
-    	//end for here
     }
 
     @FXML
