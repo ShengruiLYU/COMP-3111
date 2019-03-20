@@ -81,6 +81,7 @@ public class Controller {
     	buttonInstructorSfq.setDisable(true);
     	//add code for lab5
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + textfieldSfqUrl.getText());
+    	//do something???
     	//end for here
     }
 
