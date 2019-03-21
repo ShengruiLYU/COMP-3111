@@ -76,9 +76,11 @@ public class Controller {
     	
     }
 
-    @FXML
+    @SuppressWarnings("restriction")
+	@FXML
     void findInstructorSfq() {
     	buttonInstructorSfq.setDisable(true);
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + textfieldSfqUrl.getText());
     }
 
     @FXML
