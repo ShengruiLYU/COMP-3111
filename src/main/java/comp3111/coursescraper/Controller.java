@@ -56,7 +56,10 @@ public class Controller {
 
     @FXML
     private ProgressBar progressbar;
-
+    
+    @FXML
+    private Tab tabSfq;
+    
     @FXML
     private TextField textfieldSfqUrl;
 
@@ -65,7 +68,7 @@ public class Controller {
 
     @FXML
     private Button buttonInstructorSfq;
-
+    
     @FXML
     private TextArea textAreaConsole;
     
@@ -87,13 +90,13 @@ public class Controller {
     	double progressInterval = 100.0/allSubject.size();
     	for (String subject : allSubject) {
     		System.out.println(subject+" starts");
-    		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),subject);
+    		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
     		
     		for (Course c : v) {
         		String newline = c.getTitle() + "\n";
         		for (int i = 0; i < c.getNumSlots(); i++) {
         			Slot t = c.getSlot(i);
-        			newline += "Slot " + i + ":" + t + "\n";
+        			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
         		}
         		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
         	}
@@ -137,8 +140,6 @@ public class Controller {
 				stats3 += name + ", ";
 			}
 			stats3 = stats3.substring(0, stats3.length()-1) + "\n";
-//			System.out.println(Instructor.getToKeep());
-//			System.out.println(Instructor.getToRemove());
 			textAreaConsole.setText(textAreaConsole.getText() + "\n" + stats1 + stats2 + stats3);
 	    	for (Course c : v) {
 	
@@ -180,21 +181,18 @@ class BarThread extends Thread {
 	  double percentage;
 
 	  public BarThread(ProgressBar bar) {
-	    progressBar = bar;
+		  progressBar = bar;
 	  }
 	  public void setPercentage(double p) {
-		  percentage =p;
+		  percentage = p;
 	  }
 
 	  public void run() {
 	   System.out.println("running barthread");
 	   while (percentage < 99.9){
-	      try {
-	    	  
-	    	  progressBar.setProgress(percentage);
-	    	 
-
-	        Thread.sleep(DELAY);
+		   try {
+			   progressBar.setProgress(percentage);
+			   Thread.sleep(DELAY);
 	      } catch (InterruptedException ignoredException) {
 	      }
 	    }
