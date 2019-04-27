@@ -16,4 +16,21 @@ public class ItemTest {
 		i.setTitle("ABCDE");
 		assertEquals(i.getTitle(), "ABCDE");
 	}
+	
+	@Test
+	public void testSetDescription() {
+		Course i = new Course();
+		i.setDescription("ABCDEFG");
+		assertEquals(i.getDescription(), "ABCDEFG");	
+	}
+	
+	@Test
+	public void testAddSlot() {
+		Course c =  new Course();
+		for (int i=0; i < 22; i+=1) {
+			Slot s = new Slot();
+			c.addSlot(s);
+		}
+		assertEquals(c.getNumSlots(), 20);
+	}
 }
