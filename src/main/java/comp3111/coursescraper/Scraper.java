@@ -12,7 +12,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import java.util.Vector;
 
-
 /**
  * WebScraper provide a sample code that scrape web content. After it is constructed, you can call the method scrape with a keyword, 
  * the client will go to the default url and parse the page by looking at the HTML DOM.  
@@ -87,11 +86,12 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
+	private void addSlot(HtmlElement e, Course c, boolean secondRow, String sectionCode) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		if (times[0].equals("TBA"))
 			return;
+		boolean tu310pmFlag = false; // for checking if the slot covers Tuesday 3:10pm
 		for (int j = 0; j < times[0].length(); j+=2) {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)
@@ -100,8 +100,24 @@ public class Scraper {
 			s.setDay(Slot.DAYS_MAP.get(code));
 			s.setStart(times[1]);
 			s.setEnd(times[3]);
+			Time time1 = new Time(times[1]);
+			Time time2 = new Time(times[3]);
+			if (time1.compares(new Time("03:10pm")) == -1 & time2.compares(new Time("03:10pm")) == 1 & 
+					code.equals("Tu")) {
+				tu310pmFlag = true;
+			}
 			s.setVenue(venue);
+			s.setSectionCode(sectionCode);
 			c.addSlot(s);	
+		}
+		
+		for (DomNode instructor_line: e.getChildNodes().get(secondRow ? 2 : 5).getChildNodes()) {
+			if (!instructor_line.asText().isEmpty() & !instructor_line.asText().equals(" ")) {
+				String instructor = instructor_line.asText();
+				Instructor.addAll(instructor);
+				if (tu310pmFlag)
+					Instructor.addToRemove(instructor);
+			}
 		}
 
 	}
@@ -136,19 +152,41 @@ public class Scraper {
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
+				boolean validCourseFlag = false; // indicate whether this course, c, has at least one valid section
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
-					addSlot(e, c, false);
+					Section s = new Section(e.getChildNodes().get(1).asText());
+					Section.increaseNumUnique();
+					if (!s.isValid())
+						continue;
+					validCourseFlag = true;
+					addSlot(e, c, false, s.getSectionCode());
 					e = (HtmlElement)e.getNextSibling();
 					if (e != null && !e.getAttribute("class").contains("newsect"))
-						addSlot(e, c, true);
+						addSlot(e, c, true, s.getSectionCode());
+
 				}
+				
+				//if this course contains at least a valid section, then increase the count of total num of courses
+				if (validCourseFlag)
+					Course.increaseNumValidUnique(); 
 				
 				result.add(c);
 			}
 			client.close();
 			return result;
 		} catch (Exception e) {
-			System.out.println(e);
+			if (e instanceof com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException & 
+					e.getMessage().substring(0,3).equals("404")) {
+				Vector<Course> notfound = new Vector<Course>(); // a "notfound" list of course
+				Course c= new Course();
+				c.setTitle(e.getMessage());
+				notfound.add(c);
+				return notfound;
+			}
+			else {
+
+				System.out.println(e);
+			}
 		}
 		return null;
 	}

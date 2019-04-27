@@ -4,12 +4,14 @@ package comp3111.coursescraper;
 
 public class Course {
 	private static final int DEFAULT_MAX_SLOT = 20;
+	private static int numValidUnique = 0;
 	
 	private String title ; 
 	private String description ;
 	private String exclusion;
 	private Slot [] slots;
 	private int numSlots;
+ 
 	
 	public Course() {
 		slots = new Slot[DEFAULT_MAX_SLOT];
@@ -84,5 +86,15 @@ public class Course {
 		this.numSlots = numSlots;
 	}
 	
-
+	static public void increaseNumValidUnique() {
+		numValidUnique++;
+	}
+	
+	static public int getNumValidUnique() {
+		return numValidUnique;
+	}
+	
+	static public void resetNumValidUnique() {
+		numValidUnique=0;
+	}
 }

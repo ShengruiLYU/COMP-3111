@@ -2,9 +2,12 @@ package comp3111.coursescraper;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
+
+
 
 public class Slot {
 	private int day;
@@ -13,10 +16,13 @@ public class Slot {
 	private String venue;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
+	private String sectionCode; 
 	static {
 		for (int i = 0; i < DAYS.length; i++)
 			DAYS_MAP.put(DAYS[i], i);
 	}
+	
+
 
 	@Override
 	public Slot clone() {
@@ -25,6 +31,8 @@ public class Slot {
 		s.start = this.start;
 		s.end = this.end;
 		s.venue = this.venue;
+		s.sectionCode = this.sectionCode;
+		
 		return s;
 	}
 	public String toString() {
@@ -90,6 +98,14 @@ public class Slot {
 	 */
 	public void setDay(int day) {
 		this.day = day;
+	}
+	
+	public void setSectionCode(String code) {
+		this.sectionCode = code;
+	}
+	
+	public String getSectionCode() {
+		return this.sectionCode;
 	}
 
 }

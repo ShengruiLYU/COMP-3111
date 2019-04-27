@@ -88,15 +88,37 @@ public class Controller {
 
     @FXML
     void search() {
+    	
+    	textAreaConsole.setText("");// clear any console output legacies
+    	Section.resetNumUnique(); // reset Section count
+    	Course.resetNumValidUnique(); // reset Course count
+    	Instructor.reset(); // reset instructor list
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	for (Course c : v) {
-    		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			newline += "Slot " + i + ":" + t + "\n";
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
+    	// check if the scraper encountered 404 error
+		if (!v.isEmpty() & v.get(0).getTitle().substring(0,13).equals("404 Not Found")) {
+			textAreaConsole.setText(v.get(0).getTitle());
+		}
+		else {
+			String stats1 = "Total Number of difference sections in this search: " +  Integer.toString(Section.getNumUnique()) + "\n";
+			String stats2 = "Total Number of Course in this search: " +  Integer.toString(Course.getNumValidUnique()) + "\n";
+			String stats3 = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+			for (String name: Instructor.getSortedToKeepList()) {
+				stats3 += name + ", ";
+			}
+			stats3 = stats3.substring(0, stats3.length()-1) + "\n";
+//			System.out.println(Instructor.getToKeep());
+//			System.out.println(Instructor.getToRemove());
+			textAreaConsole.setText(textAreaConsole.getText() + "\n" + stats1 + stats2 + stats3);
+	    	for (Course c : v) {
+	
+	    		String newline = c.getTitle() + "\n";
+	    		for (int i = 0; i < c.getNumSlots(); i++) {
+	    			Slot t = c.getSlot(i);
+	    			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
+	    		}
+	    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+	    	}
+		}
     	
     	//Add a random block on Saturday
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
