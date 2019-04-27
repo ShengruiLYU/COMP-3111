@@ -73,7 +73,16 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() {
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
     	
+    	
+    	List<String> v = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "finish all subject search "+v.size());
+    	for (String s : v) {
+    		String newline = s + "\n";
+    		
+    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+    	}
     }
 
     @FXML
