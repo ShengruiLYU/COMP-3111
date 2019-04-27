@@ -15,5 +15,33 @@ public class ItemTest {
 		Course i = new Course();
 		i.setTitle("ABCDE");
 		assertEquals(i.getTitle(), "ABCDE");
+	
 	}
+
+	@Test
+	public void testSlotTime() {
+		Slot s = new Slot();
+		s.setStart("02:00AM");
+		assertEquals(s.getStartHour(), 2);
+	}
+	
+	@Test
+	public void testSetDescription() {
+		Course i = new Course();
+		i.setDescription("ABCDEFG");
+		assertEquals(i.getDescription(), "ABCDEFG");	
+	}
+	
+	@Test
+	public void testAddSlot() {
+		Course c =  new Course();
+		for (int i=0; i < 23; i+=1) {
+			Slot s = new Slot();
+			c.addSlot(s);
+//			if (i==10)
+//				assertSame(c.getSlot(i), s);
+		}
+		assertEquals(c.getNumSlots(), 20);
+	}
+	
 }
