@@ -24,6 +24,7 @@ public class ItemTest {
 		s.setStart("02:00AM");
 		assertEquals(s.getStartHour(), 2);
 	}
+
 	
 	@Test
 	public void testSetDescription() {
@@ -35,13 +36,11 @@ public class ItemTest {
 	@Test
 	public void testAddSlot() {
 		Course c =  new Course();
-		for (int i=0; i < 23; i+=1) {
+
+		for (int i=0; i < 22; i+=1) {
 			Slot s = new Slot();
 			c.addSlot(s);
-//			if (i==10)
-//				assertSame(c.getSlot(i), s);
 		}
 		assertEquals(c.getNumSlots(), 20);
 	}
-	
 }

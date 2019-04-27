@@ -190,5 +190,28 @@ public class Scraper {
 		}
 		return null;
 	}
+	
+	public List<String> getAllSubjectName (String baseurl, String term){
+		try {
+			HtmlPage page = client.getPage(baseurl +'/'+ term +'/');
+			//sample Xpath : //*[@id="navigator"]/div[2]/a[21] //*[@id="navigator"]/div[2]/a[15] //*[@id="navigator"]/div[2]/a[40]
+			List<?> courseNameItems = (List<?>) page.getByXPath("//div[@id='navigator']/div[2]/a");
+			List<String> result = new Vector<String>();
+			
+			for (int i = 0; i < courseNameItems.size(); i++) {
+				HtmlElement htmlItem = (HtmlElement) courseNameItems.get(i);
+				result.add(htmlItem.asText());
+				
+			}
+			client.close();
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("Error when getAllSubjectSearch : ");
+			System.out.println(e);
+		}
+		
+		return null;
+	}
 
 }
