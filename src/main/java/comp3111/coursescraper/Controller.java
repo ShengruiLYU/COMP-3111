@@ -73,16 +73,38 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() {
+
+    	BarThread bthread = new BarThread (progressbar);
+    	bthread.start();
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
     	
     	
-    	List<String> v = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
-    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "finish all subject search "+v.size());
-    	for (String s : v) {
-    		String newline = s + "\n";
+    	List<String> allSubject = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Categories/Code Prefix: " +allSubject.size());
+    	
+    	int totalNumOfCourses = 0;
+    	double progressVal = 0;
+    	double progressInterval = 100.0/allSubject.size();
+    	for (String subject : allSubject) {
+    		System.out.println(subject+" starts");
+    		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),subject);
     		
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+    		for (Course c : v) {
+        		String newline = c.getTitle() + "\n";
+        		for (int i = 0; i < c.getNumSlots(); i++) {
+        			Slot t = c.getSlot(i);
+        			newline += "Slot " + i + ":" + t + "\n";
+        		}
+        		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+        	}
+    		totalNumOfCourses += v.size();
+    		progressVal += progressInterval;
+    		bthread.setPercentage(progressVal);
+    		
+    		System.out.println(subject+" is done");
     	}
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " +totalNumOfCourses);
+    	
     }
 
     @FXML
@@ -126,6 +148,35 @@ public class Controller {
     	
     	
     }
+    
 
 }
-// add this comment for lab5 activity
+
+class BarThread extends Thread {
+	  private static int DELAY = 50;
+
+	  ProgressBar progressBar;
+	  double percentage;
+
+	  public BarThread(ProgressBar bar) {
+	    progressBar = bar;
+	  }
+	  public void setPercentage(double p) {
+		  percentage =p;
+	  }
+
+	  public void run() {
+	   System.out.println("running barthread");
+	   while (percentage < 99.9){
+	      try {
+	    	  
+	    	  progressBar.setProgress(percentage);
+	    	 
+
+	        Thread.sleep(DELAY);
+	      } catch (InterruptedException ignoredException) {
+	      }
+	    }
+	  }
+	}
+
