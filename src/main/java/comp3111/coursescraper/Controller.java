@@ -165,6 +165,7 @@ public class Controller {
     	TMP_COURSES.add("ENGG 4930A"); 
     	TMP_COURSES.add("CIVL 1100");
     	TMP_COURSES.add("LABU 1100");
+    	TMP_COURSES.add("ELEC 1095A");
     	// scrape the list from website
     	List<String>results = scraper.scrapeSFQ(textfieldSfqUrl.getText(), TMP_COURSES);
     	textAreaConsole.setText(""); // clear the console for new output.

@@ -217,35 +217,25 @@ public class Scraper {
 	}
 	
 	public List<String> scrapeSFQ(String baseurl, List<String> enrolledCourses){
-		// handle 404
-		// scrape
-		// htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 		try {
 			//dummy url for testing
 			String baseurl2 = "http://ywangdr.student.ust.hk/wp-content/uploads/2019/04/School_Summary_Report.html";
 			List<String> results = new ArrayList<String>();
 			HtmlPage page = client.getPage(baseurl2); 
 			List<?> items = (List<?>) page.getByXPath(".//td[@colspan='3']");
-			System.out.println("items' size: ---------------------");
-			System.out.println(page.asText().length());
-			System.out.println(items.size());
 			//parse the html for target courses
 			List<HtmlElement> enrolledNodes = new ArrayList<HtmlElement>();
 			for (HtmlElement item: (List<HtmlElement>)items) {
-				System.out.println(item.asText());
 				String[] name_code = item.asText().split(" ");
 				if (name_code[1].length()!=4 | name_code[2].length()<4 | name_code[2].length()>5) {
 					continue;
 				}
 				if (enrolledCourses.contains(name_code[1] + ' ' + name_code[2])) {
-//					System.out.println("found " + name_code[1] + ' ' + name_code[2] + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					enrolledNodes.add(item);
 					enrolledCourses.remove(name_code[1] + ' ' + name_code[2]);
 				}
 				else 
 					continue;
-				
-				
 				//retrieve corresponding section(s)'s scores
 				HtmlElement parent = (HtmlElement)item.getParentNode();
 				float totalScore=0;
@@ -275,11 +265,13 @@ public class Scraper {
 						System.out.println(scoreString);
 					}
 				}
-				float aveScore = totalScore/count;
-//				System.out.print(name_code[1] + ' ' + name_code[2] + " Score");
-//				System.out.print(aveScore);
-//				System.out.println("");
-				results.add(name_code[1] + ' ' + name_code[2] + " unadjusted average score: " + Float.toString(aveScore) + ".");
+				if (count > 0){
+					float aveScore = totalScore/count;
+					results.add(name_code[1] + ' ' + name_code[2] + " unadjusted average score: " + Float.toString(aveScore) + ".");
+				}
+				else {
+					results.add("Cannot identify the score for " + name_code[1] + ' ' + name_code[2] + ".");
+				}
 			}
 			for (String notFoundCourse: enrolledCourses) {
 				results.add(notFoundCourse + " not found in " + baseurl);
