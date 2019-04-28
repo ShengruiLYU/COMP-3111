@@ -321,7 +321,7 @@ public class Controller {
     		return false;
     	else
     		return true;
-    	// true means meets all filter requirements
+    	// true means meeting all filter requirements
     }
     
     @FXML
