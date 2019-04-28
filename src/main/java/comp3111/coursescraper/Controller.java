@@ -281,14 +281,15 @@ public class Controller {
     		int thisSat = 0;
     		int invalidFlag = 0;
     		
-        	if(c.getExclusion() == null)
+        	if(c.getExclusion() == "null") {
+        		//textAreaConsole.setText(textAreaConsole.getText() + c.getExclusion() + "\n");
         		thisNE = 1;
+        	}
     		
-        	if(c.getCommonCore() != null) {
+        	if(c.getCommonCore() != "null") {
         		thisCC = 1;
         		//textAreaConsole.setText(textAreaConsole.getText() + c.getCommonCore() + "\n");
         	}
-        		thisCC = 1;
         	
     		int numSlots = c.getNumSlots();
     		
@@ -478,7 +479,10 @@ public class Controller {
     	Course.resetNumValidUnique(); // reset Course count
     	Instructor.reset(); // reset instructor list
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-      this.myCourseList = v;
+    	
+    	//added by jr, for use of filtering
+    	this.myCourseList = v;
+    	
     	// check if the scraper encountered 404 error (or other errors)
 		if (v == null) {
 			textAreaConsole.setText("Some errors occurred when scraping " + textfieldURL.getText());
