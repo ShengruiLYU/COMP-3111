@@ -20,6 +20,8 @@ import javafx.scene.control.CheckBox;
 //import javafx.event.ActionEvent;
 
 import java.util.Random;
+
+import java.util.ArrayList;
 import java.util.List;
 public class Controller {
 
@@ -155,7 +157,29 @@ public class Controller {
 
     @FXML
     void findSfqEnrollCourse() {
-
+    	// create dummy list of course strings, need to use results from task 4 later.
+    	List<String> TMP_COURSES = new ArrayList<String>();
+    	TMP_COURSES.add("COMP 2012");
+    	TMP_COURSES.add("CENG 4913");
+    	TMP_COURSES.add("MECH 4000K");
+    	TMP_COURSES.add("ENGG 4930A"); 
+    	TMP_COURSES.add("CIVL 1100");
+    	TMP_COURSES.add("LABU 1100");
+    	// scrape the list from website
+    	List<String>results = scraper.scrapeSFQ(textfieldSfqUrl.getText(), TMP_COURSES);
+    	textAreaConsole.setText(""); // clear the console for new output.
+    	// handle 404 error.
+    	if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
+			textAreaConsole.setText(results.get(0));
+			return;
+		}
+    	// output results.
+    	for (String result: results) {
+    		//output something in certain format
+    		textAreaConsole.setText(textAreaConsole.getText() + result + "\n");
+    	};
+    	
+    	
     }
     
     @FXML
@@ -335,7 +359,7 @@ public class Controller {
     	Instructor.reset(); // reset instructor list
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     	// check if the scraper encountered 404 error
-		if (!v.isEmpty() & v.get(0).getTitle().substring(0,13).equals("404 Not Found")) {
+		if (v.size()==1 & v.get(0).getTitle().substring(0,13).equals("404 Not Found")) {
 			textAreaConsole.setText(v.get(0).getTitle());
 		}
 		else {
@@ -373,8 +397,6 @@ public class Controller {
     	randomLabel.setMaxHeight(60);
     
     	ap.getChildren().addAll(randomLabel);
-    	
-    	
     	
     }
 

@@ -1,9 +1,11 @@
 package comp3111.coursescraper;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -211,6 +213,91 @@ public class Scraper {
 			System.out.println(e);
 		}
 		
+		return null;
+	}
+	
+	public List<String> scrapeSFQ(String baseurl, List<String> enrolledCourses){
+		// handle 404
+		// scrape
+		// htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
+		try {
+			//dummy url for testing
+			String baseurl2 = "http://ywangdr.student.ust.hk/wp-content/uploads/2019/04/School_Summary_Report.html";
+			List<String> results = new ArrayList<String>();
+			HtmlPage page = client.getPage(baseurl2); 
+			List<?> items = (List<?>) page.getByXPath(".//td[@colspan='3']");
+			System.out.println("items' size: ---------------------");
+			System.out.println(page.asText().length());
+			System.out.println(items.size());
+			//parse the html for target courses
+			List<HtmlElement> enrolledNodes = new ArrayList<HtmlElement>();
+			for (HtmlElement item: (List<HtmlElement>)items) {
+				System.out.println(item.asText());
+				String[] name_code = item.asText().split(" ");
+				if (name_code[1].length()!=4 | name_code[2].length()<4 | name_code[2].length()>5) {
+					continue;
+				}
+				if (enrolledCourses.contains(name_code[1] + ' ' + name_code[2])) {
+//					System.out.println("found " + name_code[1] + ' ' + name_code[2] + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					enrolledNodes.add(item);
+					enrolledCourses.remove(name_code[1] + ' ' + name_code[2]);
+				}
+				else 
+					continue;
+				
+				
+				//retrieve corresponding section(s)'s scores
+				HtmlElement parent = (HtmlElement)item.getParentNode();
+				float totalScore=0;
+				int count=0;
+				while (true) {
+					HtmlElement next = (HtmlElement)parent.getNextElementSibling();
+					parent = next;
+					List<HtmlElement> collumnNodes = new ArrayList<HtmlElement>();
+					for (DomElement child: next.getChildElements()) {
+						collumnNodes.add((HtmlElement) child);
+					}
+					//end at "department overall line" or next course's line
+					if (collumnNodes.size()< 8 | ((HtmlElement)collumnNodes.get(0)).asText().trim().length()>3) {
+						break;
+					}
+					//skip instructor's line
+					if (((HtmlElement) collumnNodes.get(1)).asText().trim().length() <= 1){
+						continue;
+					}
+					//finally pinpoint the section's line
+					String scoreString = ((HtmlElement) collumnNodes.get(3)).asText().substring(0, 4);
+					try {
+						totalScore +=  Float.parseFloat(scoreString);
+						count+=1;
+					}catch (Exception e) {
+						System.out.println(e);
+						System.out.println(scoreString);
+					}
+				}
+				float aveScore = totalScore/count;
+//				System.out.print(name_code[1] + ' ' + name_code[2] + " Score");
+//				System.out.print(aveScore);
+//				System.out.println("");
+				results.add(name_code[1] + ' ' + name_code[2] + " unadjusted average score: " + Float.toString(aveScore) + ".");
+			}
+			for (String notFoundCourse: enrolledCourses) {
+				results.add(notFoundCourse + " not found in " + baseurl);
+			}
+			client.close();
+			return results;
+		} catch (Exception e) {
+			// still only look for 404 error
+			if (e instanceof com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException & 
+					e.getMessage().substring(0,3).equals("404")) {
+				List<String> notfound = new ArrayList<String>(); // a "notfound" list of course
+				notfound.add(e.getMessage());
+				return notfound;
+			}
+			else {
+				System.out.println(e);
+			}
+		}
 		return null;
 	}
 
