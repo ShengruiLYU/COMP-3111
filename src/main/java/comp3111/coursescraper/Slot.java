@@ -21,7 +21,7 @@ public class Slot {
 		for (int i = 0; i < DAYS.length; i++)
 			DAYS_MAP.put(DAYS[i], i);
 	}
-	
+	private String CourseName;
 
 
 	@Override
@@ -32,7 +32,7 @@ public class Slot {
 		s.end = this.end;
 		s.venue = this.venue;
 		s.sectionCode = this.sectionCode;
-		
+		s.CourseName = this.CourseName;
 		return s;
 	}
 	public String toString() {
@@ -106,6 +106,25 @@ public class Slot {
 	
 	public String getSectionCode() {
 		return this.sectionCode;
+	}
+	
+	public Integer getAbsStartTime() {
+		return getStartHour()*60+getStartMinute();
+	}
+	public Integer getAbsEndTime() {
+		return getEndHour()*60+getEndMinute();
+	}
+	public void setCourseName(String s) {
+		this.CourseName = s;
+	}
+	public String getCourseName() {
+		return this.CourseName;
+	}
+	public void setLocalTimeStart(LocalTime s) {
+		this.start = s;
+	}
+	public void setLocalTimeEnd(LocalTime s) {
+		this.end = s;
 	}
 
 }
