@@ -22,6 +22,8 @@ import javafx.scene.control.CheckBox;
 import java.util.Random;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 public class Controller {
 
@@ -383,20 +385,81 @@ public class Controller {
 		}
     	
     	//Add a random block on Saturday
+		
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	Label randomLabel = new Label("COMP1022\nL1");
-    	Random r = new Random();
-    	double start = (r.nextInt(10) + 1) * 20 + 40;
+    	List<Course> toDisplay = new ArrayList<Course>();
+    	for (int i = 0; i< 5; i++) {
+    		toDisplay.add(v.get(i));
+    	}
+    	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
+    	
+    	for (int i =0; i<6 ;i++) {
+    		daySlots.add(new ArrayList<Slot>());
+    	}
+    	
+    	Comparator<Slot> compareByStart = (Slot o1, Slot o2) ->
+        o1.getAbsStartTime().compareTo( o2.getAbsStartTime() );
+        
+        Comparator<Slot> compareByEnd = (Slot o1, Slot o2) ->
+        o1.getAbsEndTime().compareTo( o2.getAbsEndTime() );
+        
+		for (Course c: toDisplay) {
+			for (int i = 0; i < c.getNumSlots(); i++) {
+    			Slot t = c.getSlot(i);
+    			t.setCourseName(c.getTitle());
+    			int day = t.getDay();
+    			daySlots.get(day).add(t);
+    		}
+		}
+		List <Slot> overlappings = new ArrayList<Slot>();
+		for (List<Slot> sls : daySlots) {
+			Collections.sort(sls,compareByStart);
+			for (int i = 0; i<sls.size();i++) {
+				Slot curr = sls.get(i);
+				if (i<sls.size()-1) {
+				Slot next = sls.get(i+1);
+				if (next.getAbsStartTime()<curr.getAbsEndTime()) {
+					Slot overlap = next.clone();
+					overlap.setEnd(curr.getEnd().toString());
+					overlappings.add(overlap);
+					
+				}
+				}
+				Label randomLabel = new Label(curr.getCourseName());
+				
+		    	double start = (curr.getAbsStartTime() + 1)/10;
+		    	System.out.println(start);
 
-    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-    	randomLabel.setLayoutX(600.0);
-    	randomLabel.setLayoutY(start);
-    	randomLabel.setMinWidth(100.0);
-    	randomLabel.setMaxWidth(100.0);
-    	randomLabel.setMinHeight(60);
-    	randomLabel.setMaxHeight(60);
-    
-    	ap.getChildren().addAll(randomLabel);
+		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
+		    	randomLabel.setLayoutY(start);
+		    	randomLabel.setMinWidth(100.0);
+		    	randomLabel.setMaxWidth(100.0);
+		    	randomLabel.setMinHeight(60);
+		    	randomLabel.setMaxHeight(60);
+		    
+		    	ap.getChildren().addAll(randomLabel);
+			}
+			for (Slot overlap : overlappings) {
+				Label randomLabel = new Label(overlap.getCourseName());
+				
+		    	double start = (overlap.getAbsStartTime() + 1)/10;
+		    	System.out.println(start);
+
+		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		    	randomLabel.setLayoutX(overlap.getDay()*100.0+100.0);
+		    	randomLabel.setLayoutY(start);
+		    	randomLabel.setMinWidth(100.0);
+		    	randomLabel.setMaxWidth(100.0);
+		    	randomLabel.setMinHeight(60);
+		    	randomLabel.setMaxHeight(60);
+		    
+		    	ap.getChildren().addAll(randomLabel);
+			}
+			
+	    	
+		}
+    	
     	
     }
 
