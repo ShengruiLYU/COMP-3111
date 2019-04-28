@@ -2,7 +2,9 @@ package comp3111.coursescraper;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -186,8 +188,7 @@ public class Scraper {
 				return notfound;
 			}
 			else {
-
-				System.out.println(e);
+				System.err.println(e);
 			}
 		}
 		return null;
@@ -209,42 +210,33 @@ public class Scraper {
 			return result;
 			
 		} catch (Exception e) {
-			System.out.println("Error when getAllSubjectSearch : ");
-			System.out.println(e);
+			System.err.println("Error when getAllSubjectSearch : ");
+			System.err.println(e);
 		}
 		
 		return null;
 	}
 	
-	public List<String> scrapeSFQ(String baseurl, List<String> enrolledCourses){
-		// handle 404
-		// scrape
-		// htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
+	public List<String> scrapeSFQEnrolledCourses(String baseurl, List<String> enrolledCourses){
 		try {
 			//dummy url for testing
-			String baseurl2 = "http://ywangdr.student.ust.hk/wp-content/uploads/2019/04/School_Summary_Report.html";
 			List<String> results = new ArrayList<String>();
-			HtmlPage page = client.getPage(baseurl2); 
+			HtmlPage page = client.getPage(baseurl); 
 			List<?> items = (List<?>) page.getByXPath(".//td[@colspan='3']");
-			System.out.println("items' size: ---------------------");
-			System.out.println(page.asText().length());
-			System.out.println(items.size());
+			
 			//parse the html for target courses
 			List<HtmlElement> enrolledNodes = new ArrayList<HtmlElement>();
 			for (HtmlElement item: (List<HtmlElement>)items) {
-				System.out.println(item.asText());
 				String[] name_code = item.asText().split(" ");
 				if (name_code[1].length()!=4 | name_code[2].length()<4 | name_code[2].length()>5) {
 					continue;
 				}
 				if (enrolledCourses.contains(name_code[1] + ' ' + name_code[2])) {
-//					System.out.println("found " + name_code[1] + ' ' + name_code[2] + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					enrolledNodes.add(item);
 					enrolledCourses.remove(name_code[1] + ' ' + name_code[2]);
 				}
 				else 
 					continue;
-				
 				
 				//retrieve corresponding section(s)'s scores
 				HtmlElement parent = (HtmlElement)item.getParentNode();
@@ -253,33 +245,34 @@ public class Scraper {
 				while (true) {
 					HtmlElement next = (HtmlElement)parent.getNextElementSibling();
 					parent = next;
-					List<HtmlElement> collumnNodes = new ArrayList<HtmlElement>();
+					List<HtmlElement> columnNodes = new ArrayList<HtmlElement>();
 					for (DomElement child: next.getChildElements()) {
-						collumnNodes.add((HtmlElement) child);
+						columnNodes.add((HtmlElement) child);
 					}
 					//end at "department overall line" or next course's line
-					if (collumnNodes.size()< 8 | ((HtmlElement)collumnNodes.get(0)).asText().trim().length()>3) {
+					if (columnNodes.size()< 8 | ((HtmlElement)columnNodes.get(0)).asText().trim().length()>3) {
 						break;
 					}
 					//skip instructor's line
-					if (((HtmlElement) collumnNodes.get(1)).asText().trim().length() <= 1){
+					if (((HtmlElement) columnNodes.get(1)).asText().trim().length() <= 1){
 						continue;
 					}
 					//finally pinpoint the section's line
-					String scoreString = ((HtmlElement) collumnNodes.get(3)).asText().substring(0, 4);
+					String scoreString = ((HtmlElement) columnNodes.get(3)).asText().substring(0, 4);
 					try {
 						totalScore +=  Float.parseFloat(scoreString);
-						count+=1;
+						count += 1;
 					}catch (Exception e) {
 						System.out.println(e);
-						System.out.println(scoreString);
 					}
 				}
-				float aveScore = totalScore/count;
-//				System.out.print(name_code[1] + ' ' + name_code[2] + " Score");
-//				System.out.print(aveScore);
-//				System.out.println("");
-				results.add(name_code[1] + ' ' + name_code[2] + " unadjusted average score: " + Float.toString(aveScore) + ".");
+				if (count > 0){
+					float aveScore = totalScore/count;
+					results.add(name_code[1] + ' ' + name_code[2] + " unadjusted average score: " + Float.toString(aveScore) + ".");
+				}
+				else {
+					results.add("Cannot identify the score of " + name_code[1] + ' ' + name_code[2] + ".");
+				}
 			}
 			for (String notFoundCourse: enrolledCourses) {
 				results.add(notFoundCourse + " not found in " + baseurl);
@@ -295,10 +288,75 @@ public class Scraper {
 				return notfound;
 			}
 			else {
-				System.out.println(e);
+				System.err.println(e);
 			}
 		}
 		return null;
 	}
-
+	
+	public List<String> scrapeSFQInstructors(String baseurl){
+		Map<String, Instructor> name_instructor_map = new HashMap<String, Instructor>();
+		try {
+			HtmlPage page = client.getPage(baseurl); 
+			List<?> rows = (List<?>) page.getElementsByTagName("tr");
+			for (HtmlElement row: (List<HtmlElement>)rows) {
+				// collect child elements
+				List<HtmlElement> columnNodes = new ArrayList<HtmlElement>();
+				for (DomElement child: row.getChildElements()) {
+					columnNodes.add((HtmlElement) child);
+				}
+				
+				// if not a instructor's row, ignored
+				if (columnNodes.size()!=8) {
+					continue;
+				}
+				if (columnNodes.get(0).asText().trim().length() != 0 |
+						columnNodes.get(1).asText().trim().length() != 0 | columnNodes.get(2).asText().trim().length() <= 2) {
+					continue;
+				}
+				
+				// check if the score is convertable to float
+				float score;
+				try {
+					String scoreString = ((HtmlElement) columnNodes.get(4)).asText().substring(0, 4);
+					score = Float.parseFloat(scoreString);
+				}
+				catch(Exception e) {
+					System.out.println(e);
+					System.out.println("Cannot idenfify the score of " + columnNodes.get(2).asText().trim() 
+							+ " in scrapeSFQInstructors(): ");
+					continue;
+				}
+				
+				//update map
+				if (name_instructor_map.containsKey(columnNodes.get(2).asText().trim())) {
+					// map already has the instructor's record
+					name_instructor_map.get(columnNodes.get(2).asText().trim()).addSFQScore(score);
+				}
+				else {
+					name_instructor_map.put(columnNodes.get(2).asText().trim(), new Instructor(score));
+				}
+			}
+			client.close();
+		} catch (Exception e) {
+			// still only looking for 404 error
+			if (e instanceof com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException & 
+					e.getMessage().substring(0,3).equals("404")) {
+				List<String> notfound = new ArrayList<String>(); // a "notfound" list of course
+				notfound.add(e.getMessage());
+				return notfound;
+			}
+			else {
+				System.err.println(e);
+			}
+		}
+		// convert the map to strings for display
+		List<String> results = new ArrayList<String>();
+		for (Map.Entry e: name_instructor_map.entrySet()) {
+			results.add("Instructor: " + e.getKey() + "; average SFQ score: " + 
+							Float.toString(((Instructor)e.getValue()).getAverageSFQScore()) + "; #Sections: " + 
+							Integer.toString(((Instructor)e.getValue()).getNumSections()));
+		}
+		return results;
+	}
 }

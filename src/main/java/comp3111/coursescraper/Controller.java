@@ -154,7 +154,27 @@ public class Controller {
 
     @FXML
     void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
+    	buttonInstructorSfq.setDisable(true); //
+    	
+    	// scrape the list from website
+    	List<String>results = scraper.scrapeSFQInstructors(textfieldSfqUrl.getText());
+    	textAreaConsole.setText(""); // clear the console for new output.
+    	// handle 404 error. 
+    	if (results == null) {
+    		textfieldSfqUrl.setText("Some errors occurred when scraping " + textfieldSfqUrl.getText());
+    	}
+    	
+    	else if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
+			textAreaConsole.setText(results.get(0));
+			return;
+		}
+    	else {
+	    	// output results.
+	    	for (String result: results) {
+	    		//output something in certain format
+	    		textAreaConsole.setText(textAreaConsole.getText() + result + "\n");
+	    	}
+    	}
     }
 
     @FXML
@@ -167,19 +187,26 @@ public class Controller {
     	TMP_COURSES.add("ENGG 4930A"); 
     	TMP_COURSES.add("CIVL 1100");
     	TMP_COURSES.add("LABU 1100");
+    	TMP_COURSES.add("ELEC 1095A");
     	// scrape the list from website
-    	List<String>results = scraper.scrapeSFQ(textfieldSfqUrl.getText(), TMP_COURSES);
+    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), TMP_COURSES);
     	textAreaConsole.setText(""); // clear the console for new output.
-    	// handle 404 error.
-    	if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
+    	// handle 404 error (or other types of errors).
+    	if (results == null) {
+			textAreaConsole.setText("Some errors occurred when scraping " + textfieldSfqUrl.getText());
+    	}
+    	
+    	else if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
 			textAreaConsole.setText(results.get(0));
 			return;
 		}
-    	// output results.
-    	for (String result: results) {
-    		//output something in certain format
-    		textAreaConsole.setText(textAreaConsole.getText() + result + "\n");
-    	};
+    	else {
+	    	// output results.
+	    	for (String result: results) {
+	    		//output something in certain format
+	    		textAreaConsole.setText(textAreaConsole.getText() + result + "\n");
+	    	}
+    	}
     	
     	
     }
@@ -360,8 +387,11 @@ public class Controller {
     	Course.resetNumValidUnique(); // reset Course count
     	Instructor.reset(); // reset instructor list
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	// check if the scraper encountered 404 error
-		if (v.size()==1 & v.get(0).getTitle().substring(0,13).equals("404 Not Found")) {
+    	// check if the scraper encountered 404 error (or other errors)
+		if (v == null) {
+			textAreaConsole.setText("Some errors occurred when scraping " + textfieldURL.getText());
+		}
+		else if (v.size()==1 & v.get(0).getTitle().substring(0,13).equals("404 Not Found")) {
 			textAreaConsole.setText(v.get(0).getTitle());
 		}
 		else {
