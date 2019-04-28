@@ -114,7 +114,7 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() {
-
+    	buttonSfqEnrollCourse.setDisable(false);
     	BarThread bthread = new BarThread (progressbar);
     	bthread.start();
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
@@ -328,7 +328,7 @@ public class Controller {
     
     @FXML
     void search() {
-    	
+    	buttonSfqEnrollCourse.setDisable(false);
     	textAreaConsole.setText("");// clear any console output legacies
     	Section.resetNumUnique(); // reset Section count
     	Course.resetNumValidUnique(); // reset Course count
