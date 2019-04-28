@@ -120,5 +120,11 @@ public class Slot {
 	public String getCourseName() {
 		return this.CourseName;
 	}
+	public void setLocalTimeStart(LocalTime s) {
+		this.start = s;
+	}
+	public void setLocalTimeEnd(LocalTime s) {
+		this.end = s;
+	}
 
 }
