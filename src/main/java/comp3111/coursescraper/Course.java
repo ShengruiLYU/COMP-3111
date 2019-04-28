@@ -11,6 +11,7 @@ public class Course {
 	private String exclusion;
 	private Slot [] slots;
 	private int numSlots;
+	private String commonCore;
  
 	
 	public Course() {
@@ -70,6 +71,20 @@ public class Course {
 	 */
 	public void setExclusion(String exclusion) {
 		this.exclusion = exclusion;
+	}
+	
+	/**
+	 * @return the common core
+	 */
+	public String getCommonCore() {
+		return commonCore;
+	}
+
+	/**
+	 * @param commonCore the commonCore to set
+	 */
+	public void setCommonCore(String commonCore) {
+		this.commonCore = commonCore;
 	}
 
 	/**

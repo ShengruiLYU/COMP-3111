@@ -151,6 +151,17 @@ public class Scraper {
 				}
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				
+				List<?> popupdetailslist2 = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
+				HtmlElement commonCore = null;
+				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist2) {
+					HtmlElement t = (HtmlElement) e.getFirstByXPath(".//th");
+					HtmlElement d = (HtmlElement) e.getFirstByXPath(".//td");
+					if (t.asText().equals("ATTRIBUTES")) {
+						commonCore = d;
+					}
+				}
+				c.setCommonCore((commonCore == null ? "null" : commonCore.asText()));
+				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				boolean validCourseFlag = false; // indicate whether this course, c, has at least one valid section
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
