@@ -16,6 +16,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
+import javafx.scene.control.CheckBox;
+//import javafx.event.ActionEvent;
 
 import java.util.Random;
 import java.util.List;
@@ -70,6 +72,42 @@ public class Controller {
     private Button buttonInstructorSfq;
     
     @FXML
+    private Button buttonSelectAll;
+    
+    @FXML
+    private CheckBox checkboxAM;
+
+    @FXML
+    private CheckBox checkboxPM;
+
+    @FXML
+    private CheckBox checkboxMonday;
+
+    @FXML
+    private CheckBox checkboxTuesday;
+    
+    @FXML
+    private CheckBox checkboxWednesday;
+
+    @FXML
+    private CheckBox checkboxThursday;
+    
+    @FXML
+    private CheckBox checkboxFriday;
+
+    @FXML
+    private CheckBox checkboxSaturday;
+    
+    @FXML
+    private CheckBox checkboxCC;
+
+    @FXML
+    private CheckBox checkboxNoExclusion;
+    
+    @FXML
+    private CheckBox checkboxWithLabTut;
+    
+    @FXML
     private TextArea textAreaConsole;
     
     private Scraper scraper = new Scraper();
@@ -119,7 +157,175 @@ public class Controller {
     void findSfqEnrollCourse() {
 
     }
+    
+    @FXML
+    void selectAllBoxes() {
+    	if(buttonSelectAll.getText() != "De-select All") {
+    		buttonSelectAll.setText("De-select All");
+    		checkboxAM.setSelected(true);
+    		checkboxPM.setSelected(true);
+    		checkboxMonday.setSelected(true);
+    		checkboxTuesday.setSelected(true);
+    		checkboxWednesday.setSelected(true);
+    		checkboxThursday.setSelected(true);
+    		checkboxFriday.setSelected(true);
+    		checkboxSaturday.setSelected(true);
+    		checkboxCC.setSelected(true);
+    		checkboxNoExclusion.setSelected(true);
+    		checkboxWithLabTut.setSelected(true);
+    		return;
+    	}
+    	
+    	buttonSelectAll.setText("Select All");
+		checkboxAM.setSelected(false);
+		checkboxPM.setSelected(false);
+		checkboxMonday.setSelected(false);
+		checkboxTuesday.setSelected(false);
+		checkboxWednesday.setSelected(false);
+		checkboxThursday.setSelected(false);
+		checkboxFriday.setSelected(false);
+		checkboxSaturday.setSelected(false);
+		checkboxCC.setSelected(false);
+		checkboxNoExclusion.setSelected(false);
+		checkboxWithLabTut.setSelected(false);
+    }
+    
+    
 
+    @FXML
+    void checkAM() {
+    	if(checkboxAM.isSelected() == true) {
+    		//do sth
+    		//checkboxAM.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxAM.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkCC() {
+    	if(checkboxCC.isSelected()) {
+    		//do sth
+    		//checkboxCC.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxCC.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkFri() {
+    	if(checkboxFriday.isSelected()) {
+    		//do sth
+    		//checkboxFriday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxFriday.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkMon() {
+    	if(checkboxMonday.isSelected()) {
+    		//do sth
+    		//checkboxMonday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxMonday.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkNE() {
+    	if(checkboxNoExclusion.isSelected()) {
+    		//do sth
+    		//checkboxNoExclusion.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxNoExclusion.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkPM() {
+    	if(checkboxPM.isSelected()) {
+    		//do sth
+    		//checkboxPM.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxPM.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkSat() {
+    	if(checkboxSaturday.isSelected()) {
+    		//do sth
+    		//checkboxSaturday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxSaturday.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkThu() {
+    	if(checkboxThursday.isSelected()) {
+    		//do sth
+    		//checkboxThursday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxThursday.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkTue() {
+    	if(checkboxTuesday.isSelected()) {
+    		//do sth
+    		//checkboxTuesday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxTuesday.setSelected(true);
+    	}
+    }
+
+    @FXML
+    void checkWLabTut() {
+    	if(checkboxWithLabTut.isSelected()) {
+    		//do sth
+    		//checkboxWithLabTut.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxWithLabTut.setSelected(true);
+    	}
+    	
+    }
+
+    @FXML
+    void checkWed() {
+    	if(checkboxWednesday.isSelected()) {
+    		//do sth
+    		//checkboxWednesday.setSelected(false);
+    	}
+    	else {
+    		//do sth
+    		//checkboxWednesday.setSelected(true);
+    	}
+    }
+    
+    
     @FXML
     void search() {
     	
