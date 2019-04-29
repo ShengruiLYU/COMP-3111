@@ -18,6 +18,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.control.CheckBox;
 //import javafx.event.ActionEvent;
 
@@ -493,86 +494,13 @@ public class Controller {
     	
 		this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
 		
-    	//Add a random block on Saturday
-		
-    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	List<Course> toDisplay = new ArrayList<Course>();
-    	for (int i = 10; i< 11; i++) {
+    	//Print courses after search, to be removed if enrollment is done
+
+		List<Course> toDisplay = new ArrayList<Course>();
+    	for (int i = 13; i< 18; i++) {
     		toDisplay.add(v.get(i));
     	}
-    	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
-    	
-    	for (int i =0; i<6 ;i++) {
-    		daySlots.add(new ArrayList<Slot>());
-    	}
-    	
-    	Comparator<Slot> compareByStart = (Slot o1, Slot o2) ->
-        o1.getAbsStartTime().compareTo( o2.getAbsStartTime() );
-        
-        Comparator<Slot> compareByEnd = (Slot o1, Slot o2) ->
-        o1.getAbsEndTime().compareTo( o2.getAbsEndTime() );
-        
-		for (Course c: toDisplay) {
-			for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			t.setCourseName(c.getTitle());
-    			int day = t.getDay();
-    			daySlots.get(day).add(t);
-    		}
-		}
-		List <Slot> overlappings = new ArrayList<Slot>();
-		for (List<Slot> sls : daySlots) {
-			Collections.sort(sls,compareByStart);
-			for (int i = 0; i<sls.size();i++) {
-				Slot curr = sls.get(i);
-				if (i<sls.size()-1) {
-				Slot next = sls.get(i+1);
-				if (next.getAbsStartTime()<curr.getAbsEndTime()) {
-					Slot overlap = next.clone();
-					overlap.setLocalTimeEnd(curr.getEnd());
-					overlappings.add(overlap);
-					
-				}
-				}
-				Label randomLabel = new Label(curr.getCourseName());
-				
-		    	double start = (curr.getAbsStartTime() + 1)/10;
-		    	double height = curr.getAbsEndTime() - curr.getAbsStartTime();
-		    	System.out.println(start);
-		    	double hight = curr.getAbsEndTime() - curr.getAbsStartTime();
-		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-		    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
-		    	randomLabel.setLayoutY(start);
-		    	randomLabel.setMinWidth(100.0);
-		    	randomLabel.setMaxWidth(100.0);
-		    	randomLabel.setMinHeight(height);
-		    	randomLabel.setMaxHeight(height);
-		    	randomLabel.setOpacity(0.5);
-		    
-		    	ap.getChildren().addAll(randomLabel);
-			}
-			for (Slot overlap : overlappings) {
-				Label randomLabel = new Label("");
-				
-		    	double start = (overlap.getAbsStartTime() + 1)/10;
-		    	System.out.println(start);
-
-		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
-		    	randomLabel.setOpacity(0.5);
-		    	randomLabel.setLayoutX(overlap.getDay()*100.0+100.0);
-		    	randomLabel.setLayoutY(start);
-		    	randomLabel.setMinWidth(100.0);
-		    	randomLabel.setMaxWidth(100.0);
-		    	double height = overlap.getAbsEndTime() - overlap.getAbsStartTime();
-		    	randomLabel.setMinHeight(height);
-		    	randomLabel.setMaxHeight(height);
-		    
-		    	//ap.getChildren().addAll(randomLabel);
-			}
-			
-	    	
-		}
-    	
+    	printTimeTable(toDisplay);
     	
     }
     final Task <Void> allSubjectThread = new Task <Void>() {
@@ -608,6 +536,60 @@ public class Controller {
     		return null;
     	}
     };
+    
+    @FXML
+    void printTimeTable(List<Course> toDisplay) {
+		
+    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	
+    	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
+    	
+    	for (int i =0; i<6 ;i++) {
+    		daySlots.add(new ArrayList<Slot>());
+    	}
+    	
+        double colorInterval = 360/(toDisplay.size()+1);
+        double color = 0;
+		for (Course c: toDisplay) {
+			for (int i = 0; i < c.getNumSlots(); i++) {
+    			Slot t = c.getSlot(i);
+    			t.setCourseName(c.getTitle());
+    			t.setColor(color);
+    			
+    			int day = t.getDay();
+    			daySlots.get(day).add(t);
+    		}
+			color +=colorInterval;
+		}
+		
+		for (List<Slot> sls : daySlots) {
+			
+			for (int i = 0; i<sls.size();i++) {
+				Slot curr = sls.get(i);
+				
+				int temp = curr.getCourseName().indexOf('-');
+				String LabelName = curr.getCourseName().substring(0, temp)+'\n'+curr.getSectionCode();
+				Label randomLabel = new Label(LabelName);
+				randomLabel.setFont (new Font(5.0));
+				//randomLabel.setWrapText(true);
+		    	double start = 40+(curr.getStartHour()+(curr.getStartMinute()+0.0)/60.0-9)*20;
+		    	double height = (curr.getAbsEndTime() - curr.getAbsStartTime())/3.0;
+		    
+		    	
+		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.hsb(curr.getColor(), 1, 1), CornerRadii.EMPTY, Insets.EMPTY)));
+		    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
+		    	randomLabel.setLayoutY(start);
+		    	randomLabel.setMinWidth(100.0);
+		    	randomLabel.setMaxWidth(100.0);
+		    	randomLabel.setMinHeight(height);
+		    	randomLabel.setMaxHeight(height);
+		    	randomLabel.setOpacity(0.5);
+		    
+		    	ap.getChildren().addAll(randomLabel);
+			}
+	    	
+		}
+    }
 
 }
 

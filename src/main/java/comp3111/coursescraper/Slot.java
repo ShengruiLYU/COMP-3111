@@ -22,6 +22,7 @@ public class Slot {
 			DAYS_MAP.put(DAYS[i], i);
 	}
 	private String CourseName;
+	private double colorHue;
 
 
 	@Override
@@ -33,6 +34,7 @@ public class Slot {
 		s.venue = this.venue;
 		s.sectionCode = this.sectionCode;
 		s.CourseName = this.CourseName;
+		s.colorHue = this.colorHue;
 		return s;
 	}
 	public String toString() {
@@ -125,6 +127,12 @@ public class Slot {
 	}
 	public void setLocalTimeEnd(LocalTime s) {
 		this.end = s;
+	}
+	public void setColor(double d) {
+		this.colorHue = d;
+	}
+	public double getColor() {
+		return this.colorHue;
 	}
 
 }
