@@ -3,6 +3,9 @@ package comp3111.coursescraper;
 
 import java.awt.event.ActionEvent;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -20,7 +24,9 @@ import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
 //import javafx.event.ActionEvent;
+import javafx.scene.control.TableView;
 
 import java.util.Random;
 
@@ -117,10 +123,58 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
+    @FXML
+    private TableView<Slot> tableListCourse;
+    
+    @FXML
+    private TableColumn<Slot, String> courseCode;
+
+    @FXML
+    private TableColumn<Slot, String> section;
+
+    @FXML
+    private TableColumn<Slot, String> courseName;
+
+    @FXML
+    private TableColumn<Slot, String> instructor;
+
+    @FXML
+    private TableColumn<Slot, String> enroll;
+    
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
+    private List<Course> myEnrolledCourseList;
+    
+    ObservableList<Slot> listInTable = FXCollections.observableArrayList();
+    
+    @FXML
+    void updateList() {
+    	//update this list when tab is selected
+    	/*
+    	for (Course c : this.myUpdatedCourseList) {
+    		textAreaConsole.setText(textAreaConsole.getText() + c.getSlot(0).getInstructor() + "\n");
+    	}
+    	*/
+    	for (Course c : myUpdatedCourseList) {
+    		int numSlots = c.getNumSlots();
+    		for(int i = 0; i < numSlots; i++) {
+    			listInTable.add(c.getSlot(i));
+    		}
+    	}
+    	
+    	tableListCourse.setItems(listInTable);
+    	textAreaConsole.setText(textAreaConsole.getText() + "roger" + "\n");
+    	//courseCode.setCellValueFactory(new PropertyValueFactory<Slot,String>("myname"));
+    	//section.setCellValueFactory(new PropertyValueFactory<Slot,String>("my section"));
+    	//courseName.setCellValueFactory(cellData->new ReadOnlyStringWrapper(cellData.getValue().getCourseName()));
+    	courseCode.setEditable(false);
+    	section.setEditable(false);
+    	courseName.setEditable(false);
+    	instructor.setEditable(false);
+    	//textAreaConsole.setText(value);
+    }
     
     @FXML
     void allSubjectSearch() {
@@ -271,6 +325,7 @@ public class Controller {
         	if(c.getCommonCore() != "null") {
         		thisCC = 1;
         		//textAreaConsole.setText(textAreaConsole.getText() + c.getCommonCore() + "\n");
+        		
         	}
         	
     		int numSlots = c.getNumSlots();
@@ -280,6 +335,9 @@ public class Controller {
     		
     		for (int i = 0; i<numSlots; i++) {
     			int courseDay = c.getSlot(i).getDay();
+    			
+    			//test instructor
+            	//textAreaConsole.setText(textAreaConsole.getText() + c.getSlot(i).getInstructor() + "\n");
     			
     			if(courseDay == 0)
     				thisMon = 1;
@@ -327,6 +385,7 @@ public class Controller {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
+    	updateList();
     	return;
     	
     }

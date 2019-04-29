@@ -14,6 +14,7 @@ public class Slot {
 	private LocalTime start;
 	private LocalTime end;
 	private String venue;
+	private String instructor;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	private String sectionCode; 
@@ -23,6 +24,7 @@ public class Slot {
 	}
 	private String CourseName;
 	private double colorHue;
+	private int enrollment = 0;
 
 
 	@Override
@@ -32,9 +34,11 @@ public class Slot {
 		s.start = this.start;
 		s.end = this.end;
 		s.venue = this.venue;
+		s.instructor = this.instructor;
 		s.sectionCode = this.sectionCode;
 		s.CourseName = this.CourseName;
 		s.colorHue = this.colorHue;
+		s.enrollment = this.enrollment;
 		return s;
 	}
 	public String toString() {
@@ -87,6 +91,34 @@ public class Slot {
 	 */
 	public void setVenue(String venue) {
 		this.venue = venue;
+	}
+	
+	/**
+	 * @return the instructor
+	 */
+	public String getInstructor() {
+		return instructor;
+	}
+
+	/**
+	 * @param instructor the instructor to set
+	 */
+	public void setInstructor(String instructor) {
+		this.instructor = instructor;
+	}
+	
+	/**
+	 * @return the enrollment
+	 */
+	public int getEnrollment() {
+		return enrollment;
+	}
+
+	/**
+	 * @param enrollment the enrollment to set
+	 */
+	public void setEnrollment(int enrollment) {
+		this.enrollment = enrollment;
 	}
 
 	/**
