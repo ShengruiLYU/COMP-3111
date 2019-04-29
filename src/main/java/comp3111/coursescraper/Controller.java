@@ -2,6 +2,8 @@ package comp3111.coursescraper;
 
 
 import java.awt.event.ActionEvent;
+
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -116,42 +118,21 @@ public class Controller {
     
     private Scraper scraper = new Scraper();
     
-    private List<Course> myCourseList;
+    private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
     
     @FXML
     void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
-    	BarThread bthread = new BarThread (progressbar);
-    	bthread.start();
+    	progressbar.progressProperty().bind(allSubjectThread.progressProperty());
+    	final Thread ssthread = new Thread(allSubjectThread,"all subject search thread");
+    	ssthread.setDaemon(true);
+    	ssthread.start();
+    	
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
     	
     	
-    	List<String> allSubject = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
-    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Categories/Code Prefix: " +allSubject.size());
     	
-    	int totalNumOfCourses = 0;
-    	double progressVal = 0;
-    	double progressInterval = 100.0/allSubject.size();
-    	for (String subject : allSubject) {
-    		System.out.println(subject+" starts");
-    		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
-    		this.myCourseList = v;
-    		for (Course c : v) {
-        		String newline = c.getTitle() + "\n";
-        		for (int i = 0; i < c.getNumSlots(); i++) {
-        			Slot t = c.getSlot(i);
-        			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
-        		}
-        		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-        	}
-    		totalNumOfCourses += v.size();
-    		progressVal += progressInterval;
-    		bthread.setPercentage(progressVal);
-    		
-    		System.out.println(subject+" is done");
-    	}
-    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " +totalNumOfCourses);
     	
     	this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     }
@@ -594,31 +575,41 @@ public class Controller {
     	
     	
     }
+    final Task <Void> allSubjectThread = new Task <Void>() {
+    	@Override
+    	protected Void call() throws Exception {
+    		List<String> allSubject = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
+        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Categories/Code Prefix: " +allSubject.size());
+        	
+        	int totalNumOfCourses = 0;
+        	
+        	int subjectCount = 0;
+        	for (String subject : allSubject) {
+        		System.out.println(subject+" starts");
+        		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
+        		Controller.myCourseList = v;
+        		String newline = "";
+        		for (Course c : v) {
+            		newline += c.getTitle() + "\n";
+            		for (int i = 0; i < c.getNumSlots(); i++) {
+            			Slot t = c.getSlot(i);
+            			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
+            		}
+            		
+            	}
+        		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+        		totalNumOfCourses += v.size();
+        		subjectCount +=1;
+        		updateProgress(subjectCount+1,allSubject.size());
+        		
+        		System.out.println(subject+" is done");
+        	}
+        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " +totalNumOfCourses);
+    		return null;
+    	}
+    };
 
 }
 
-class BarThread extends Thread {
-	  private static int DELAY = 50;
 
-	  ProgressBar progressBar;
-	  double percentage;
-
-	  public BarThread(ProgressBar bar) {
-		  progressBar = bar;
-	  }
-	  public void setPercentage(double p) {
-		  percentage = p;
-	  }
-
-	  public void run() {
-	   System.out.println("running barthread");
-	   while (percentage < 99.9){
-		   try {
-			   progressBar.setProgress(percentage);
-			   Thread.sleep(DELAY);
-	      } catch (InterruptedException ignoredException) {
-	      }
-	    }
-	  }
-	}
 
