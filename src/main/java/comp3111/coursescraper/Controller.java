@@ -161,12 +161,34 @@ public class Controller implements Initializable{
     void enrollUpdate() {
     	myEnrolledCourseList.clear();
     	textAreaConsole.clear();
+    	
+    	//get the list of checked courses
+    	//course code + section code = unique id
     	for(int i =0; i < tableListCourse.getItems().size(); i++) {
     		if(tableListCourse.getItems().get(i).getEnroll().isSelected()) {
-    			myEnrolledCourseList.add(tableListCourse.getItems().get(i).getCourseCode());
+    			//myEnrolledCourseList.add(tableListCourse.getItems().get(i).getCourseCode());
+    			tableListCourse.getItems().get(i).setStatus(1);
     			textAreaConsole.setText(textAreaConsole.getText()+tableListCourse.getItems().get(i).getCourseCode()+"\n");
     		}
+    		else {
+    			tableListCourse.getItems().get(i).setStatus(0);
+    		}
     	}
+    	
+    	//encode the enrollment status in myCourseList
+    	for(Course c : myCourseList) {
+    		String [] completeNameTemp = c.getTitle().split("\\ - ");
+    		for (int i = 0; i < c.getNumSlots(); i++) {
+    			
+    			String uniqueID = completeNameTemp[0] + c.getSlot(i).getSectionCode();
+    			if(myEnrolledCourseList.contains(uniqueID)) {
+    				
+    			}
+    		}
+    		
+    	}
+    	
+    	
     }
     
     
@@ -183,8 +205,11 @@ public class Controller implements Initializable{
     		String [] tempL = c.getTitle().split("\\ - ");
     		
     		for (int i = 0; i < c.getNumSlots(); i++) {
-    			listInTable.add(new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor()));
-    			//textAreaConsole.setText(textAreaConsole.getText()+tempL[0]+"!!!"+tempL[1]+"\n");
+    			CourseList currentChoice = new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor());
+    			if(c.getSlot(i).getEnrollment() > 0) {
+    				currentChoice.getEnroll().setSelected(true);
+    			}
+    			listInTable.add(currentChoice);
     		}
     		
     	}

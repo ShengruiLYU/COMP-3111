@@ -11,6 +11,8 @@ public class CourseList {
 	private SimpleStringProperty courseName;
 	private SimpleStringProperty instructor;
 	private CheckBox enroll;
+	private int status;
+	//0 means no enroll, 1 means enroll
 	
 	public CourseList(String courseCode, String section, String courseName, String instructor){
         this.setCourseCode(courseCode);
@@ -19,6 +21,7 @@ public class CourseList {
         this.setInstructor(instructor);
         //this.enroll = enroll;
         this.setEnroll(new CheckBox());
+        this.setStatus(0);
     }
 
 	public String getCourseCode() {
@@ -79,6 +82,14 @@ public class CourseList {
 
 	public void setEnroll(CheckBox enroll) {
 		this.enroll = enroll;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 
