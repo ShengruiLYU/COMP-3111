@@ -1,7 +1,7 @@
 package comp3111.coursescraper;
 
 
-//import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
@@ -29,7 +29,7 @@ import javafx.util.Callback;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.event.ActionEvent;
+//import javafx.event.ActionEvent;
 import javafx.scene.control.TableView;
 
 import java.net.URL;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-public class Controller implements Initializable {
+public class Controller implements Initializable{
 
     @FXML
     private Tab tabMain;
@@ -131,42 +131,43 @@ public class Controller implements Initializable {
     private TextArea textAreaConsole;
     
     @FXML
-    private TableView<courseList> tableListCourse;
+    private TableView<CourseList> tableListCourse;
     
     @FXML
-    private TableColumn<courseList, String> courseCode;
+    private TableColumn<CourseList, String> courseCode;
 
     @FXML
-    private TableColumn<courseList, String> section;
+    private TableColumn<CourseList, String> section;
 
     @FXML
-    private TableColumn<courseList, String> courseName;
+    private TableColumn<CourseList, String> courseName;
 
     @FXML
-    private TableColumn<courseList, String> instructor;
+    private TableColumn<CourseList, String> instructor;
 
     @FXML
-    private TableColumn<courseList, String> enroll;
+    private TableColumn<CourseList, String> enroll;
     
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
-    private List<Course> myEnrolledCourseList;
+    //private List<CourseList> myEnrolledCourseList;
     
-    private ObservableList<courseList> listInTable = FXCollections.observableArrayList(
-    		new courseList("a","a","a","a","a"));
+    private ObservableList<CourseList> listInTable = FXCollections.observableArrayList(new CourseList("a","b","c","d","e"));
     
     @FXML
     void updateList() {
-    	/*
-    	for (Course c : myUpdatedCourseList) {
-    		int numSlots = c.getNumSlots();
-    		for(int i = 0; i < numSlots; i++) {
-    			listInTable.add(c.getSlot(i));
+    	this.listInTable.clear();
+    	//myEnrolledCourseList.clear();
+    	
+    	for (Course c : this.myUpdatedCourseList) {
+    		String [] tempL = c.getTitle().split("\\ - ");
+    		for (int i = 0; i < c.getNumSlots(); i++) {
+    			listInTable.add(new CourseList(tempL[0],c.getSlot(i).getSectionCode(),tempL[1],c.getSlot(i).getInstructor(),"yes"));
+    			//textAreaConsole.setText(textAreaConsole.getText()+tempL[0]+"!!!"+tempL[1]+"\n");
     		}
     	}
-    	*/
     	
     	//instructor.setCellValueFactory(new PropertyValueFactory<courseList,String>("instructor"));
     	//section.setCellValueFactory(new PropertyValueFactory<courseList,String>("section"));
@@ -174,27 +175,22 @@ public class Controller implements Initializable {
     	//courseCode.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseCode"));
     	//enroll.setCellValueFactory(new PropertyValueFactory<courseList,String>("enroll"));
     	
-    	
     	//instructor.setCellValueFactory(cellData -> cellData.getValue().instructorProperty());
     	//courseName.setCellValueFactory(cellData -> cellData.getValue().courseNameProperty());
     	//courseCode.setCellValueFactory(cellData -> cellData.getValue().courseCodeProperty());
     	//enroll.setCellValueFactory(cellData -> cellData.getValue().enrollProperty());
     	//section.setCellValueFactory(cellData -> cellData.getValue().sectionProperty());
     	
-    	textAreaConsole.setText(textAreaConsole.getText() + " doing");
     	
     	//tableListCourse.setItems(getListInTables());
     	//listInTables = getListInTables();
     	//textAreaConsole.setText("doing");
-    	return;
-    	
-    	/*
     	courseCode.setEditable(false);
-    	sectionCode.setEditable(false);
+    	section.setEditable(false);
     	courseName.setEditable(false);
     	instructor.setEditable(false);
     	enroll.setEditable(true);
-    	*/
+    	return;
     }
 
 	@FXML
@@ -406,8 +402,6 @@ public class Controller implements Initializable {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
-    	textAreaConsole.setText("call update");
-    	
     	updateList();
     	return;
     	
@@ -474,6 +468,7 @@ public class Controller implements Initializable {
 		checkboxNoExclusion.setSelected(false);
 		checkboxWithLabTut.setSelected(false);
 		updateCheckBox();
+		return;
     }
     
     
@@ -673,13 +668,29 @@ public class Controller implements Initializable {
 		}
     }
 
+	@FXML
+	public void initialize() {
+		/*
+		instructor.setCellValueFactory(new PropertyValueFactory<CourseList,String>("instructor"));
+    	section.setCellValueFactory(new PropertyValueFactory<CourseList,String>("section"));
+    	courseName.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseName"));
+    	courseCode.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseCode"));
+    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,String>("enroll"));
+    	textAreaConsole.setText("hello");
+    	tableListCourse.setItems(listInTable);
+    	*/
+	}
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		instructor.setCellValueFactory(new PropertyValueFactory<courseList,String>("instructor"));
-    	section.setCellValueFactory(new PropertyValueFactory<courseList,String>("section"));
-    	courseName.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseName"));
-    	courseCode.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseCode"));
-    	enroll.setCellValueFactory(new PropertyValueFactory<courseList,String>("enroll"));
+		
+		courseCode.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseCode"));
+    	section.setCellValueFactory(new PropertyValueFactory<CourseList,String>("section"));
+    	courseName.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseName"));
+    	instructor.setCellValueFactory(new PropertyValueFactory<CourseList,String>("instructor"));
+    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,String>("enroll"));
+    	
+    	listInTable.clear();
     	tableListCourse.setItems(listInTable);
 	}
 

@@ -129,6 +129,7 @@ public class Scraper {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
@@ -231,6 +232,7 @@ public class Scraper {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<String> scrapeSFQEnrolledCourses(String baseurl, List<String> enrolledCourses){
 		try {
 			//dummy url for testing
@@ -308,6 +310,7 @@ public class Scraper {
 		return null;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<String> scrapeSFQInstructors(String baseurl){
 		Map<String, Instructor> name_instructor_map = new HashMap<String, Instructor>();
 		try {
