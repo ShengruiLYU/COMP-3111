@@ -1,6 +1,9 @@
 package comp3111.coursescraper;
 
 import java.util.Map;
+
+import javafx.beans.property.StringProperty;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.time.LocalTime;
@@ -25,7 +28,6 @@ public class Slot {
 	private String CourseName;
 	private double colorHue;
 	private int enrollment = 0;
-
 
 	@Override
 	public Slot clone() {
