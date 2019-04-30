@@ -2,6 +2,7 @@ package comp3111.coursescraper;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.CheckBox;
 
 
 public class CourseList {
@@ -9,14 +10,15 @@ public class CourseList {
 	private SimpleStringProperty section;
 	private SimpleStringProperty courseName;
 	private SimpleStringProperty instructor;
-	private SimpleStringProperty enroll;
+	private CheckBox enroll;
 	
-	public CourseList(String courseCode, String section, String courseName, String instructor, String enroll){
+	public CourseList(String courseCode, String section, String courseName, String instructor){
         this.setCourseCode(courseCode);
         this.setSection(section);
         this.setCourseName(courseName);
         this.setInstructor(instructor);
-        this.setEnroll(enroll);
+        //this.enroll = enroll;
+        this.setEnroll(new CheckBox());
     }
 
 	public String getCourseCode() {
@@ -71,18 +73,13 @@ public class CourseList {
         return instructor; 
     }
 	
-	public String getEnroll() {
-		return enroll.get();
+	public CheckBox getEnroll() {
+		return this.enroll;
 	}
 
-	public void setEnroll(String enroll) {
-		this.enroll = new SimpleStringProperty(enroll);
+	public void setEnroll(CheckBox enroll) {
+		this.enroll = enroll;
 	}
-	
-	public StringProperty enrollProperty() { 
-        if (enroll == null) enroll = new SimpleStringProperty(this, "enroll");
-        return enroll; 
-    }
 
 
 }

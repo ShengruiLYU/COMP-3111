@@ -146,45 +146,51 @@ public class Controller implements Initializable{
     private TableColumn<CourseList, String> instructor;
 
     @FXML
-    private TableColumn<CourseList, String> enroll;
+    private TableColumn<CourseList, CheckBox> enroll;
+    //private TableColumn<CourseList, String> enroll;
     
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
-    //private List<CourseList> myEnrolledCourseList;
+    private List<String> myEnrolledCourseList;
     
-    private ObservableList<CourseList> listInTable = FXCollections.observableArrayList(new CourseList("a","b","c","d","e"));
+    private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
+    
+    @FXML
+    void enrollUpdate() {
+    	myEnrolledCourseList.clear();
+    	textAreaConsole.clear();
+    	for(int i =0; i < tableListCourse.getItems().size(); i++) {
+    		if(tableListCourse.getItems().get(i).getEnroll().isSelected()) {
+    			myEnrolledCourseList.add(tableListCourse.getItems().get(i).getCourseCode());
+    			textAreaConsole.setText(textAreaConsole.getText()+tableListCourse.getItems().get(i).getCourseCode()+"\n");
+    		}
+    	}
+    }
     
     @FXML
     void updateList() {
+    	
     	this.listInTable.clear();
+    	if(myUpdatedCourseList == null) {
+    		listInTable.clear();
+        	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
+        	return;
+    	}
     	//myEnrolledCourseList.clear();
+    	listInTable.add(new CourseList("a","b","c","d"));
     	
     	for (Course c : this.myUpdatedCourseList) {
     		String [] tempL = c.getTitle().split("\\ - ");
+    		
     		for (int i = 0; i < c.getNumSlots(); i++) {
-    			listInTable.add(new CourseList(tempL[0],c.getSlot(i).getSectionCode(),tempL[1],c.getSlot(i).getInstructor(),"yes"));
+    			listInTable.add(new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor()));
     			//textAreaConsole.setText(textAreaConsole.getText()+tempL[0]+"!!!"+tempL[1]+"\n");
     		}
+    		
     	}
     	
-    	//instructor.setCellValueFactory(new PropertyValueFactory<courseList,String>("instructor"));
-    	//section.setCellValueFactory(new PropertyValueFactory<courseList,String>("section"));
-    	//courseName.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseName"));
-    	//courseCode.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseCode"));
-    	//enroll.setCellValueFactory(new PropertyValueFactory<courseList,String>("enroll"));
-    	
-    	//instructor.setCellValueFactory(cellData -> cellData.getValue().instructorProperty());
-    	//courseName.setCellValueFactory(cellData -> cellData.getValue().courseNameProperty());
-    	//courseCode.setCellValueFactory(cellData -> cellData.getValue().courseCodeProperty());
-    	//enroll.setCellValueFactory(cellData -> cellData.getValue().enrollProperty());
-    	//section.setCellValueFactory(cellData -> cellData.getValue().sectionProperty());
-    	
-    	
-    	//tableListCourse.setItems(getListInTables());
-    	//listInTables = getListInTables();
-    	//textAreaConsole.setText("doing");
     	courseCode.setEditable(false);
     	section.setEditable(false);
     	courseName.setEditable(false);
@@ -402,7 +408,7 @@ public class Controller implements Initializable{
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
-    	updateList();
+    	//updateList();
     	return;
     	
     }
@@ -688,9 +694,10 @@ public class Controller implements Initializable{
     	section.setCellValueFactory(new PropertyValueFactory<CourseList,String>("section"));
     	courseName.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseName"));
     	instructor.setCellValueFactory(new PropertyValueFactory<CourseList,String>("instructor"));
-    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,String>("enroll"));
+    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,CheckBox>("enroll"));
     	
     	listInTable.clear();
+    	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
     	tableListCourse.setItems(listInTable);
 	}
 
