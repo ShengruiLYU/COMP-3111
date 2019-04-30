@@ -93,6 +93,8 @@ public class Scraper {
 	private void addSlot(HtmlElement e, Course c, boolean secondRow, String sectionCode) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
+		String instructorForThisSection = e.getChildNodes().get(secondRow ? 2 : 5).getChildNodes().get(0).asText();
+		
 		if (times[0].equals("TBA"))
 			return;
 		boolean tu310pmFlag = false; // for checking if the slot covers Tuesday 3:10pm
@@ -112,6 +114,7 @@ public class Scraper {
 			}
 			s.setVenue(venue);
 			s.setSectionCode(sectionCode);
+			s.setInstructor(instructorForThisSection);
 			c.addSlot(s);	
 		}
 		

@@ -3,14 +3,20 @@ package comp3111.coursescraper;
 
 import java.awt.event.ActionEvent;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -19,8 +25,15 @@ import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Callback;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 //import javafx.event.ActionEvent;
+import javafx.scene.control.TableView;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import java.util.Random;
 
@@ -28,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-public class Controller {
+public class Controller implements Initializable{
 
     @FXML
     private Tab tabMain;
@@ -117,12 +130,70 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
+    @FXML
+    private TableView<CourseList> tableListCourse;
+    
+    @FXML
+    private TableColumn<CourseList, String> courseCode;
+
+    @FXML
+    private TableColumn<CourseList, String> section;
+
+    @FXML
+    private TableColumn<CourseList, String> courseName;
+
+    @FXML
+    private TableColumn<CourseList, String> instructor;
+
+    @FXML
+    private TableColumn<CourseList, String> enroll;
+    
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
+    //private List<CourseList> myEnrolledCourseList;
+    
+    private ObservableList<CourseList> listInTable = FXCollections.observableArrayList(new CourseList("a","b","c","d","e"));
     
     @FXML
+    void updateList() {
+    	this.listInTable.clear();
+    	//myEnrolledCourseList.clear();
+    	
+    	for (Course c : this.myUpdatedCourseList) {
+    		String [] tempL = c.getTitle().split("\\ - ");
+    		for (int i = 0; i < c.getNumSlots(); i++) {
+    			listInTable.add(new CourseList(tempL[0],c.getSlot(i).getSectionCode(),tempL[1],c.getSlot(i).getInstructor(),"yes"));
+    			//textAreaConsole.setText(textAreaConsole.getText()+tempL[0]+"!!!"+tempL[1]+"\n");
+    		}
+    	}
+    	
+    	//instructor.setCellValueFactory(new PropertyValueFactory<courseList,String>("instructor"));
+    	//section.setCellValueFactory(new PropertyValueFactory<courseList,String>("section"));
+    	//courseName.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseName"));
+    	//courseCode.setCellValueFactory(new PropertyValueFactory<courseList,String>("courseCode"));
+    	//enroll.setCellValueFactory(new PropertyValueFactory<courseList,String>("enroll"));
+    	
+    	//instructor.setCellValueFactory(cellData -> cellData.getValue().instructorProperty());
+    	//courseName.setCellValueFactory(cellData -> cellData.getValue().courseNameProperty());
+    	//courseCode.setCellValueFactory(cellData -> cellData.getValue().courseCodeProperty());
+    	//enroll.setCellValueFactory(cellData -> cellData.getValue().enrollProperty());
+    	//section.setCellValueFactory(cellData -> cellData.getValue().sectionProperty());
+    	
+    	
+    	//tableListCourse.setItems(getListInTables());
+    	//listInTables = getListInTables();
+    	//textAreaConsole.setText("doing");
+    	courseCode.setEditable(false);
+    	section.setEditable(false);
+    	courseName.setEditable(false);
+    	instructor.setEditable(false);
+    	enroll.setEditable(true);
+    	return;
+    }
+
+	@FXML
     void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
     	progressbar.progressProperty().bind(allSubjectThread.progressProperty());
@@ -271,6 +342,7 @@ public class Controller {
         	if(c.getCommonCore() != "null") {
         		thisCC = 1;
         		//textAreaConsole.setText(textAreaConsole.getText() + c.getCommonCore() + "\n");
+        		
         	}
         	
     		int numSlots = c.getNumSlots();
@@ -280,6 +352,9 @@ public class Controller {
     		
     		for (int i = 0; i<numSlots; i++) {
     			int courseDay = c.getSlot(i).getDay();
+    			
+    			//test instructor
+            	//textAreaConsole.setText(textAreaConsole.getText() + c.getSlot(i).getInstructor() + "\n");
     			
     			if(courseDay == 0)
     				thisMon = 1;
@@ -327,6 +402,7 @@ public class Controller {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
+    	updateList();
     	return;
     	
     }
@@ -392,6 +468,7 @@ public class Controller {
 		checkboxNoExclusion.setSelected(false);
 		checkboxWithLabTut.setSelected(false);
 		updateCheckBox();
+		return;
     }
     
     
@@ -590,6 +667,32 @@ public class Controller {
 	    	
 		}
     }
+
+	@FXML
+	public void initialize() {
+		/*
+		instructor.setCellValueFactory(new PropertyValueFactory<CourseList,String>("instructor"));
+    	section.setCellValueFactory(new PropertyValueFactory<CourseList,String>("section"));
+    	courseName.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseName"));
+    	courseCode.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseCode"));
+    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,String>("enroll"));
+    	textAreaConsole.setText("hello");
+    	tableListCourse.setItems(listInTable);
+    	*/
+	}
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		courseCode.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseCode"));
+    	section.setCellValueFactory(new PropertyValueFactory<CourseList,String>("section"));
+    	courseName.setCellValueFactory(new PropertyValueFactory<CourseList,String>("courseName"));
+    	instructor.setCellValueFactory(new PropertyValueFactory<CourseList,String>("instructor"));
+    	enroll.setCellValueFactory(new PropertyValueFactory<CourseList,String>("enroll"));
+    	
+    	listInTable.clear();
+    	tableListCourse.setItems(listInTable);
+	}
 
 }
 

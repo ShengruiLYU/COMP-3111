@@ -12,6 +12,7 @@ public class Course {
 	private Slot [] slots;
 	private int numSlots;
 	private String commonCore;
+	private int enrollStatus;
  
 	
 	public Course() {
@@ -71,6 +72,20 @@ public class Course {
 	 */
 	public void setExclusion(String exclusion) {
 		this.exclusion = exclusion;
+	}
+	
+	/**
+	 * @return the enroll status
+	 */
+	public int getEnrollStatus() {
+		return enrollStatus;
+	}
+	
+	/**
+	 * @param enrollStatus the enroll status to set
+	 */
+	public void setEnrollStatus(int enrollStatus) {
+		this.enrollStatus = enrollStatus;
 	}
 	
 	/**
