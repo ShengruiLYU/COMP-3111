@@ -86,7 +86,7 @@
                                     <TableColumn fx:id="section" prefWidth="108.0" text="Section" />
                                   <TableColumn fx:id="courseName" prefWidth="271.0" text="Course Name" />
                                     <TableColumn fx:id="instructor" prefWidth="152.0" text="Instructor" />
-                                    <TableColumn fx:id="enroll" prefWidth="96.0" text="Enroll" />
+                                    <TableColumn fx:id="enroll" onEditStart="#enrollUpdate" prefWidth="96.0" text="Enroll" />
                                 </columns>
                               </TableView>
                               <Label layoutX="22.0" layoutY="281.0" text="*Fill the table according to the result of the Filter. If the Filter cannot be correctly implemented, show all result scrapped." />
