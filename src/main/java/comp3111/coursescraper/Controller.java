@@ -169,7 +169,7 @@ public class Controller implements Initializable{
     	}
     }
     
-    @FXML
+    
     void updateList() {
     	
     	this.listInTable.clear();
@@ -178,8 +178,6 @@ public class Controller implements Initializable{
         	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
         	return;
     	}
-    	//myEnrolledCourseList.clear();
-    	listInTable.add(new CourseList("a","b","c","d"));
     	
     	for (Course c : this.myUpdatedCourseList) {
     		String [] tempL = c.getTitle().split("\\ - ");
@@ -408,7 +406,7 @@ public class Controller implements Initializable{
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
-    	//updateList();
+    	updateList();
     	return;
     	
     }
