@@ -54,7 +54,7 @@ import java.util.List;
  * search() is for the search tab, click search button will call this function and display the search result in the ui console.
  * allSubjectSearch() is for the all subject search tab, click all subject search buttion will display the all subject search result in the console and update progress bar.
  * printTimetable() is for displaying the courses passed in on the timetable.
- * checkBox() will
+ * checkBox() will update all checkbox status.
  * checkFlag() will check whether a course will be put in the updated course list according to the filter options.
  * findInstructorSfq() find the average sfq for the instructor
  * findSfqEnrollCourse() find the average sfq scores for the enrolled course
