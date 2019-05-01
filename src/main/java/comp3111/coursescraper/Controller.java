@@ -61,6 +61,9 @@ import java.util.List;
  * findInstructorSfq() find the average sfq for the instructor
  * findSfqEnrollCourse() find the average sfq scores for the enrolled course
  * selectAll() select all the checkboxes
+ * enrollUpdate() will enroll my courses and sections
+ * updateMyEnrollment() will trigger the enrollment and display all the enrolled courses
+ * switchToList() will trigger the console update when switch to the tab "list"
  */
 public class Controller implements Initializable{
 
@@ -192,11 +195,15 @@ public class Controller implements Initializable{
     void updateMyEnrollment() {
     	enrollUpdate();
     	textAreaConsole.clear();
-    	textAreaConsole.setText("My enrolled courses are:" + "\n");
+    	textAreaConsole.setText("The following courses and sections are enrolled:" + "\n");
     	for(int i = 0; i < myEnrolledCourseList.size(); i++) {
     		textAreaConsole.setText(textAreaConsole.getText()+myEnrolledCourseList.get(i)+"\n");
     	}
-    	
+    }
+    
+    @FXML
+    void switchToList() {
+    	updateCheckBox();
     }
     
     @FXML
