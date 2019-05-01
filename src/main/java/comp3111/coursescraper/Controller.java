@@ -172,14 +172,31 @@ public class Controller implements Initializable{
     private TableColumn<CourseList, CheckBox> enroll;
     //private TableColumn<CourseList, String> enroll;
     
+    @FXML
+    private Button buttonEnroll;
+    
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
     private List<String> myEnrolledCourseList = new ArrayList<String>();
+    private List<String> myDupCourseList = new ArrayList<String>();
     
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     private List<Label> slotList = new ArrayList<Label>();
+    
+    private List<String> backUpList = new ArrayList<String>();
+    
+    @FXML
+    void updateMyEnrollment() {
+    	enrollUpdate();
+    	textAreaConsole.clear();
+    	textAreaConsole.setText("My enrolled courses are:" + "\n");
+    	for(int i = 0; i < myEnrolledCourseList.size(); i++) {
+    		textAreaConsole.setText(textAreaConsole.getText()+myEnrolledCourseList.get(i)+"\n");
+    	}
+    	
+    }
     
     @FXML
     private void enrollUpdate() {
@@ -232,9 +249,14 @@ public class Controller implements Initializable{
     			CourseList currentChoice = new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor());
     			String currentID = tempL[0] + "-" +c.getSlot(i).getSectionCode();
     			
-    			if(myEnrolledCourseList.contains(currentID))
+    			if(myEnrolledCourseList.contains(currentID)) {
     				currentChoice.getEnroll().setSelected(true);
-    			
+    			}
+    			if(i > 0) {
+    				if(c.getSlot(i).getSectionCode().equals(c.getSlot(i-1).getSectionCode())) {
+    					continue;
+    				}
+    			}
     			listInTable.add(currentChoice);
     		}
     		
@@ -331,16 +353,23 @@ public class Controller implements Initializable{
     	TMP_COURSES.add("CIVL 1100");
     	TMP_COURSES.add("LABU 1100");
     	TMP_COURSES.add("ELEC 1095A");
+    	
+    	enrollUpdate();
+    	List<String> REAL_COURSES = getEnrolledCourseCode();
     	// scrape the list from website
-    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), TMP_COURSES);
-    	textAreaConsole.setText(""); // clear the console for new output.
+    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), backUpList);
+    	textAreaConsole.setText("Task3 failed, using the first five courses...\n\n"); // clear the console for new output.
     	// handle 404 error (or other types of errors).
     	if (results == null) {
-			textAreaConsole.setText("Some errors occurred when scraping " + textfieldSfqUrl.getText());
+			textAreaConsole.setText(textAreaConsole.getText() + "Some errors occurred when scraping " + textfieldSfqUrl.getText());
+    	}
+    	
+    	else if (results.size()==0) {
+    		textAreaConsole.setText(textAreaConsole.getText() + "No courses are found.");
     	}
     	
     	else if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
-			textAreaConsole.setText(results.get(0));
+			textAreaConsole.setText(textAreaConsole.getText() + results.get(0));
 			return;
 		}
     	else {
@@ -623,8 +652,9 @@ public class Controller implements Initializable{
     	Section.resetNumUnique(); // reset Section count
     	Course.resetNumValidUnique(); // reset Course count
     	Instructor.reset(); // reset instructor list
+    	backUpList.clear();
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	
+    	backUpList = convertToFirst5CourseCodes(v);
     	//added by jr, for use of filtering
     	this.myCourseList = v;
     	
@@ -861,6 +891,20 @@ public class Controller implements Initializable{
     	tableListCourse.setItems(listInTable);
 	}
 	
+	private List<String> convertToFirst5CourseCodes(List<Course> courses){
+		List<String> codes = new ArrayList<String>();
+		int count = 0;
+		for (Course course: courses) {
+			if (count >= 5)
+				break;
+			String code = course.getTitle().split("\\-")[0].trim();
+			if (codes.contains(code))
+				continue;
+			codes.add(code);
+			count += 1;
+		}
+		return codes;
+	}
 
 
 }
