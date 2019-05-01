@@ -268,12 +268,7 @@ public class Controller implements Initializable{
     	Thread ssthread = new Thread(allSubjectThread,"all subject search thread");
     	ssthread.setDaemon(true);
     	ssthread.start();
-    	
- 
-    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
-    	
-			
-			
+    		
     	this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     }
 
