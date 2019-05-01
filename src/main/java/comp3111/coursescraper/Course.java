@@ -1,6 +1,12 @@
 package comp3111.coursescraper;
 
-
+/**
+ * 
+ * 
+ * A course can be identified by a unique course code. COMP3111 and COMP3111H are two different courses althought they are co-listed.
+ * It records title,description, exclusion, slots, number of slots, whether it is a common core and the enrollment status.
+ *
+ */
 
 public class Course {
 	private static final int DEFAULT_MAX_SLOT = 20;

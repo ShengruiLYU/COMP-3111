@@ -1,5 +1,9 @@
 package comp3111.coursescraper;
-
+/**
+ * 
+ * 
+ * A claas for representing time. it implement the compare function. And it can be coverted to a string representation.
+ */
 public class Time {
 	private String original;
 	private int half;

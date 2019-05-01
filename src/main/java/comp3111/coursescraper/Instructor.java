@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/*
+/**
  * This class has two functions:
  * 1. The static attributes and methods basically implement the requirements in task 1, which asks to find instructors teaching at a specific time;
  * 2. the instantiable (i.e., dynamic) parts implements the requirements in task 6, which asks to calculate each instructor's SFQ scores averaged over sections

@@ -3,7 +3,11 @@ package comp3111.coursescraper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
-
+/**
+ * 
+ * 
+ * For the courses used in list (Task3).
+ */
 
 public class CourseList {
 	private SimpleStringProperty courseCode;
