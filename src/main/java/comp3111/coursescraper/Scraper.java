@@ -202,7 +202,7 @@ public class Scraper {
 				return notfound;
 			}
 			else {
-				System.err.println(e);
+				System.out.println(e);
 			}
 		}
 		return null;
@@ -224,8 +224,8 @@ public class Scraper {
 			return result;
 			
 		} catch (Exception e) {
-			System.err.println("Error when getAllSubjectSearch : ");
-			System.err.println(e);
+			System.out.println("Error when getAllSubjectSearch : ");
+			System.out.println(e);
 		}
 		
 		return null;
@@ -302,7 +302,7 @@ public class Scraper {
 				return notfound;
 			}
 			else {
-				System.err.println(e);
+				System.out.println(e);
 			}
 		}
 		return null;
@@ -361,7 +361,7 @@ public class Scraper {
 				return notfound;
 			}
 			else {
-				System.err.println(e);
+				System.out.println(e);
 			}
 		}
 		// convert the map to strings for display

@@ -14,6 +14,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
@@ -36,12 +37,58 @@ public class FxTest extends ApplicationTest {
 	}
 
 	
+//	@Test
+//	public void testButton() {
+//		Button b = (Button)s.lookup("#buttonInstructorSfq");
+//		clickOn("#tabSfq");
+//		clickOn("#buttonInstructorSfq");
+//		sleep(5000);
+////		
+//		assertTrue(b.isDisabled());
+//	}
+	
+//	@Test
+//	public void testSearch() {
+//		clickOn("#tabMain");
+//		clickOn("#buttonSearch");
+//		sleep(5000);
+//	}
+	
 	@Test
-	public void testButton() {
-		//clickOn("#tabSfq");
-		//clickOn("#buttonInstructorSfq");
-		//Button b = (Button)s.lookup("#buttonInstructorSfq");
-		//sleep(1000);
-		//assertTrue(b.isDisabled());
+	public void testSearchAndSearchSFQ() {
+		Button b = (Button)s.lookup("#buttonSfqEnrollCourse");
+		assertTrue(b.isDisabled());
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
+		sleep(4000);
+		assertTrue(!b.isDisabled());
+	
+		// searchSFQ
+		clickOn("#tabSfq");
+		clickOn("#textfieldSfqUrl");
+		eraseText(30);
+		type(KeyCode.DELETE, 30);
+		write("http://ywangdr.student.ust.hk/wp-content/uploads/2019/04/School_Summary_Report.html");
+		clickOn("#buttonSfqEnrollCourse");
+		sleep(3000);
+		clickOn("#buttonInstructorSfq");
+		sleep(3000);
+	}
+	
+	@Test
+	public void test404() {
+		//test 404
+		clickOn("#tabMain");
+		clickOn("#textfieldURL");
+		type(KeyCode.DELETE, 3);
+		clickOn("#buttonSearch");
+		sleep(2000);
+	}
+//	
+	@Test
+	public void testSearchAll() {
+		clickOn("#tabAllSubject");
+		clickOn("#buttonAllSubjectSearch");
+		sleep(4000);
 	}
 }
