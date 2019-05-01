@@ -687,41 +687,7 @@ public class Controller implements Initializable{
     	
 		this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
 		
-    	//Print courses after search, because enrollment cannot be correctly done
-
-		List<Course> toDisplay = new ArrayList<Course>();
-		int upper_bound;
-		if (v.size()>5){
-			upper_bound = 5;
-		}
-		else 
-			upper_bound = v.size();
-		
-    	for (int i = 0; i< upper_bound; i++) {
-    		toDisplay.add(v.get(i));
-    	}
-    	List<Slot> toDSlot = new ArrayList<Slot>();
-    	double colorInterval = 360/(toDisplay.size()+1);
-        double color = 0;
-        int sectionCount =0;
-    	for (Course c:toDisplay) {
-    		if (sectionCount > 4) {
-    			break;
-    		}
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			if (sectionCount>4) {
-    				break;
-    			}
-    			Slot t = c.getSlot(i);
-    			t.setCourseName(c.getTitle());
-    			t.setColor(color);
-    			toDSlot.add(t);
-    			sectionCount++;
- 
-    		}
-    		color+=colorInterval;
-    	}
-    	printTimeTable2(toDSlot);
+    	
     	
     }
    
@@ -736,10 +702,11 @@ public class Controller implements Initializable{
     	for (String s : myEnrolledCourseList) {
     		int spliter = s.indexOf('-');
     		String coursename = s.substring(0, spliter);
-    		//hash_Set.add(coursename);
+    		
     		if (!coursename.equals(lasname)) {
     			color+=colorInterval;
     		}
+    		lasname = coursename;
     		String section = s.substring(spliter+1);
     		System.out.println("coursename"+coursename);
     		System.out.println("section"+section);
@@ -802,64 +769,7 @@ public class Controller implements Initializable{
     	
     }
     
-    @FXML
-    private void printTimeTable(List<Course> toDisplay) {
-		
-    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	ap.getChildren().removeAll(slotList);
-    	slotList.clear();
-    	
-    	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
-    	
-    	for (int i =0; i<6 ;i++) {
-    		daySlots.add(new ArrayList<Slot>());
-    	}
-    	
-        double colorInterval = 360/(toDisplay.size()+1);
-        double color = 0;
-		for (Course c: toDisplay) {
-			for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			t.setCourseName(c.getTitle());
-    			t.setColor(color);
-    			
-    			int day = t.getDay();
-    			daySlots.get(day).add(t);
-    		}
-			color +=colorInterval;
-		}
-		
-		for (List<Slot> sls : daySlots) {
-			
-			for (int i = 0; i<sls.size();i++) {
-				Slot curr = sls.get(i);
-				
-				int temp = curr.getCourseName().indexOf('-');
-				String LabelName = curr.getCourseName().substring(0, temp)+'\n'+curr.getSectionCode();
-				Label randomLabel = new Label(LabelName);
-				randomLabel.setFont (new Font(5.0));
-				//randomLabel.setWrapText(true);
-		    	double start = 40+(curr.getStartHour()+(curr.getStartMinute()+0.0)/60.0-9)*20;
-		    	double height = (curr.getAbsEndTime() - curr.getAbsStartTime())/3.0;
-		    
-		    	
-		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.hsb(curr.getColor(), 1, 1), CornerRadii.EMPTY, Insets.EMPTY)));
-		    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
-		    	randomLabel.setLayoutY(start);
-		    	randomLabel.setMinWidth(100.0);
-		    	randomLabel.setMaxWidth(100.0);
-		    	randomLabel.setMinHeight(height);
-		    	randomLabel.setMaxHeight(height);
-		    	randomLabel.setOpacity(0.5);
-		    	slotList.add(randomLabel);
-		    
-		    	
-			}
-	    	
-		}
-	
-		ap.getChildren().addAll(slotList);
-    }
+
 
 	@FXML
 	public void initialize() {
