@@ -36,13 +36,14 @@ import javafx.scene.control.TableView;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import java.util.Set;
 import java.util.Random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 /**
  * 
@@ -53,10 +54,10 @@ import java.util.List;
  * search() is for the search tab, click search button will call this function and display the search result in the ui console.
  * allSubjectSearch() is for the all subject search tab, click all subject search buttion will display the all subject search result in the console and update progress bar.
  * printTimetable() is for displaying the courses passed in on the timetable.
- * checkBox() will update the filter selection and the console display whe the user change the filter options.
+ * checkBox() will
  * checkFlag() will check whether a course will be put in the updated course list according to the filter options.
- * findInstructorSfq() find the sfq for the instructor
- * findSfqEnrollCourse() fin the sfq for the enrolled course
+ * findInstructorSfq() find the average sfq for the instructor
+ * findSfqEnrollCourse() find the average sfq scores for the enrolled course
  * selectAll() select all the checkboxes
  * enrollUpdate() will enroll my courses and sections
  * updateMyEnrollment() will trigger the enrollment and display all the enrolled courses
@@ -185,6 +186,8 @@ public class Controller implements Initializable{
     
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     private List<Label> slotList = new ArrayList<Label>();
+    
+    private List<String> backUpList = new ArrayList<String>();
     
     @FXML
     void updateMyEnrollment() {
@@ -356,16 +359,23 @@ public class Controller implements Initializable{
     	TMP_COURSES.add("CIVL 1100");
     	TMP_COURSES.add("LABU 1100");
     	TMP_COURSES.add("ELEC 1095A");
+    	
+    	enrollUpdate();
+    	List<String> REAL_COURSES = getEnrolledCourseCode();
     	// scrape the list from website
-    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), TMP_COURSES);
-    	textAreaConsole.setText(""); // clear the console for new output.
+    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), backUpList);
+    	textAreaConsole.setText("Task3 failed, using the first five courses...\n\n"); // clear the console for new output.
     	// handle 404 error (or other types of errors).
     	if (results == null) {
-			textAreaConsole.setText("Some errors occurred when scraping " + textfieldSfqUrl.getText());
+			textAreaConsole.setText(textAreaConsole.getText() + "Some errors occurred when scraping " + textfieldSfqUrl.getText());
+    	}
+    	
+    	else if (results.size()==0) {
+    		textAreaConsole.setText(textAreaConsole.getText() + "No courses are found.");
     	}
     	
     	else if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
-			textAreaConsole.setText(results.get(0));
+			textAreaConsole.setText(textAreaConsole.getText() + results.get(0));
 			return;
 		}
     	else {
@@ -379,6 +389,9 @@ public class Controller implements Initializable{
     	
     }
     
+    /*
+    * update the filter selection and the console display whether the user change the filter options.
+    */
     private void updateCheckBox() {
     	
     	textAreaConsole.clear();
@@ -648,8 +661,9 @@ public class Controller implements Initializable{
     	Section.resetNumUnique(); // reset Section count
     	Course.resetNumValidUnique(); // reset Course count
     	Instructor.reset(); // reset instructor list
+    	backUpList.clear();
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	
+    	backUpList = convertToFirst5CourseCodes(v);
     	//added by jr, for use of filtering
     	this.myCourseList = v;
     	
@@ -682,82 +696,89 @@ public class Controller implements Initializable{
     	
 		this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
 		
-    	//Print courses after search, to be removed if enrollment is done
-
-		List<Course> toDisplay = new ArrayList<Course>();
-		int upper_bound;
-		if (v.size()>5){
-			upper_bound = 5;
-		}
-		else 
-			upper_bound = v.size();
-		
-    	for (int i = 0; i< upper_bound; i++) {
-    		toDisplay.add(v.get(i));
-    	}
-    	printTimeTable(toDisplay);
+    	
     	
     }
    
-    
     @FXML
-    private void printTimeTable(List<Course> toDisplay) {
-		
+    private void updateTimetable() {
+    	List<Course> toDisplay = new ArrayList<Course>();
+    	List<Slot> toDSlot = new ArrayList<Slot>();
+    	double colorInterval = 360/(myEnrolledCourseList.size()+1);
+        double color = 0;
+        Set<String> hash_Set = new HashSet<String>(); 
+        String lasname = "";
+    	for (String s : myEnrolledCourseList) {
+    		int spliter = s.indexOf('-');
+    		String coursename = s.substring(0, spliter);
+    		
+    		if (!coursename.equals(lasname)) {
+    			color+=colorInterval;
+    		}
+    		lasname = coursename;
+    		String section = s.substring(spliter+1);
+    		System.out.println("coursename"+coursename);
+    		System.out.println("section"+section);
+    		
+    		for (Course c : myCourseList) {
+    			
+    			String name2  = c.getTitle();
+    			int temp = name2.indexOf('-');
+        		String coursename2 = name2.substring(0, temp-1);
+        		System.out.println("name2 "+ coursename2);
+    			for (int i = 0; i < c.getNumSlots(); i++) {
+        			Slot t = c.getSlot(i);
+        			t.setCourseName(c.getTitle());
+        			String section2 = t.getSectionCode();
+        			
+            		System.out.println("section2 "+section2);
+            		
+            		if (coursename2.equals(coursename)&& section2.equals(section)) {
+            			System.out.println("matched "+coursename2+section2);
+            			t.setColor(color);
+            			toDSlot.add(t);
+            		}
+        		}
+    			
+    		}
+    	}
+    	printTimeTable2(toDSlot);
+    }
+    @FXML 
+    private void printTimeTable2(List<Slot> toDSlot) {
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
     	ap.getChildren().removeAll(slotList);
     	slotList.clear();
     	
-    	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
-    	
-    	for (int i =0; i<6 ;i++) {
-    		daySlots.add(new ArrayList<Slot>());
-    	}
-    	
-        double colorInterval = 360/(toDisplay.size()+1);
-        double color = 0;
-		for (Course c: toDisplay) {
-			for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			t.setCourseName(c.getTitle());
-    			t.setColor(color);
-    			
-    			int day = t.getDay();
-    			daySlots.get(day).add(t);
-    		}
-			color +=colorInterval;
-		}
-		
-		for (List<Slot> sls : daySlots) {
+    	for (int i = 0; i<toDSlot.size();i++) {
+			Slot curr = toDSlot.get(i);
 			
-			for (int i = 0; i<sls.size();i++) {
-				Slot curr = sls.get(i);
-				
-				int temp = curr.getCourseName().indexOf('-');
-				String LabelName = curr.getCourseName().substring(0, temp)+'\n'+curr.getSectionCode();
-				Label randomLabel = new Label(LabelName);
-				randomLabel.setFont (new Font(5.0));
-				//randomLabel.setWrapText(true);
-		    	double start = 40+(curr.getStartHour()+(curr.getStartMinute()+0.0)/60.0-9)*20;
-		    	double height = (curr.getAbsEndTime() - curr.getAbsStartTime())/3.0;
-		    
-		    	
-		    	randomLabel.setBackground(new Background(new BackgroundFill(Color.hsb(curr.getColor(), 1, 1), CornerRadii.EMPTY, Insets.EMPTY)));
-		    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
-		    	randomLabel.setLayoutY(start);
-		    	randomLabel.setMinWidth(100.0);
-		    	randomLabel.setMaxWidth(100.0);
-		    	randomLabel.setMinHeight(height);
-		    	randomLabel.setMaxHeight(height);
-		    	randomLabel.setOpacity(0.5);
-		    	slotList.add(randomLabel);
-		    
-		    	
-			}
+			int temp = curr.getCourseName().indexOf('-');
+			String LabelName = curr.getCourseName().substring(0, temp)+'\n'+curr.getSectionCode();
+			Label randomLabel = new Label(LabelName);
+			randomLabel.setFont (new Font(5.0));
+			//randomLabel.setWrapText(true);
+	    	double start = 40+(curr.getStartHour()+(curr.getStartMinute()+0.0)/60.0-9)*20;
+	    	double height = (curr.getAbsEndTime() - curr.getAbsStartTime())/3.0;
+	    
+	    	
+	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.hsb(curr.getColor(), 1, 1), CornerRadii.EMPTY, Insets.EMPTY)));
+	    	randomLabel.setLayoutX(curr.getDay()*100.0+100.0);
+	    	randomLabel.setLayoutY(start);
+	    	randomLabel.setMinWidth(100.0);
+	    	randomLabel.setMaxWidth(100.0);
+	    	randomLabel.setMinHeight(height);
+	    	randomLabel.setMaxHeight(height);
+	    	randomLabel.setOpacity(0.5);
+	    	slotList.add(randomLabel);
+	    
 	    	
 		}
-	
-		ap.getChildren().addAll(slotList);
+    	ap.getChildren().addAll(slotList);
+    	
     }
+    
+
 
 	@FXML
 	public void initialize() {
@@ -789,6 +810,20 @@ public class Controller implements Initializable{
     	tableListCourse.setItems(listInTable);
 	}
 	
+	private List<String> convertToFirst5CourseCodes(List<Course> courses){
+		List<String> codes = new ArrayList<String>();
+		int count = 0;
+		for (Course course: courses) {
+			if (count >= 5)
+				break;
+			String code = course.getTitle().split("\\-")[0].trim();
+			if (codes.contains(code))
+				continue;
+			codes.add(code);
+			count += 1;
+		}
+		return codes;
+	}
 
 
 }

@@ -83,5 +83,11 @@ public class FxTest extends ApplicationTest {
 		clickOn("#buttonSelectAll");
 		clickOn("#buttonSelectAll");
 		clickOn("#checkboxMonday");
+		clickOn("#checkboxWithLabTut");
+		clickOn("#checkboxWithLabTut");
+		clickOn("#checkboxNoExclusion");
+		clickOn("#checkboxNoExclusion");
+		clickOn("#checkboxCC");
+		clickOn("#checkboxCC");
 	}
 }
