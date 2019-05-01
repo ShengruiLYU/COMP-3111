@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.Random;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -174,42 +175,34 @@ public class Controller implements Initializable{
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
-    private List<String> myEnrolledCourseList;
+    private List<String> myEnrolledCourseList = new ArrayList<String>();
     
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     
     @FXML
     private void enrollUpdate() {
-    	myEnrolledCourseList.clear();
-    	textAreaConsole.clear();
-    	
+    	if(myUpdatedCourseList == null) {
+    		listInTable.clear();
+        	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
+        	return;
+    	}
     	//get the list of checked courses
     	//course code + section code = unique id
     	for(int i =0; i < tableListCourse.getItems().size(); i++) {
+    		String uniqueID = tableListCourse.getItems().get(i).getCourseCode() + "-" + tableListCourse.getItems().get(i).getSection();
+    		
     		if(tableListCourse.getItems().get(i).getEnroll().isSelected()) {
-    			//myEnrolledCourseList.add(tableListCourse.getItems().get(i).getCourseCode());
-    			tableListCourse.getItems().get(i).setStatus(1);
-    			textAreaConsole.setText(textAreaConsole.getText()+tableListCourse.getItems().get(i).getCourseCode()+"\n");
+    			if(!(myEnrolledCourseList.contains(uniqueID))) {
+    				myEnrolledCourseList.add(uniqueID);
+    			}
     		}
     		else {
-    			tableListCourse.getItems().get(i).setStatus(0);
-    		}
-    	}
-    	
-    	//encode the enrollment status in myCourseList
-    	for(Course c : myCourseList) {
-    		String [] completeNameTemp = c.getTitle().split("\\ - ");
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			
-    			String uniqueID = completeNameTemp[0] + c.getSlot(i).getSectionCode();
     			if(myEnrolledCourseList.contains(uniqueID)) {
-    				
+    				myEnrolledCourseList.remove(uniqueID);
     			}
     		}
     		
     	}
-    	
-    	
     }
     
     
@@ -227,9 +220,11 @@ public class Controller implements Initializable{
     		
     		for (int i = 0; i < c.getNumSlots(); i++) {
     			CourseList currentChoice = new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor());
-    			if(c.getSlot(i).getEnrollment() > 0) {
+    			String currentID = tempL[0] + "-" +c.getSlot(i).getSectionCode();
+    			
+    			if(myEnrolledCourseList.contains(currentID))
     				currentChoice.getEnroll().setSelected(true);
-    			}
+    			
     			listInTable.add(currentChoice);
     		}
     		
@@ -482,7 +477,7 @@ public class Controller implements Initializable{
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
-    	
+    	enrollUpdate();
     	updateList();
     	return;
     	
@@ -748,6 +743,9 @@ public class Controller implements Initializable{
     	
     	listInTable.clear();
     	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
+    	//myEnrolledCourseList = Arrays.asList("one", "two", "three");
+    	//myEnrolledCourseList.clear();
+    	//myEnrolledCourseList.add("start");
     	tableListCourse.setItems(listInTable);
 	}
 	
