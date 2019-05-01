@@ -35,24 +35,6 @@ public class FxTest extends ApplicationTest {
    		stage.show();
    		s = scene;
 	}
-
-	
-//	@Test
-//	public void testButton() {
-//		Button b = (Button)s.lookup("#buttonInstructorSfq");
-//		clickOn("#tabSfq");
-//		clickOn("#buttonInstructorSfq");
-//		sleep(5000);
-////		
-//		assertTrue(b.isDisabled());
-//	}
-	
-//	@Test
-//	public void testSearch() {
-//		clickOn("#tabMain");
-//		clickOn("#buttonSearch");
-//		sleep(5000);
-//	}
 	
 	@Test
 	public void testSearchAndSearchSFQ() {
@@ -72,7 +54,7 @@ public class FxTest extends ApplicationTest {
 		clickOn("#buttonSfqEnrollCourse");
 		sleep(3000);
 		clickOn("#buttonInstructorSfq");
-		sleep(3000);
+		sleep(2000);
 	}
 	
 	@Test
@@ -89,6 +71,17 @@ public class FxTest extends ApplicationTest {
 	public void testSearchAll() {
 		clickOn("#tabAllSubject");
 		clickOn("#buttonAllSubjectSearch");
+		sleep(2000);
+	}
+	
+	@Test
+	public void testFilter() {
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
 		sleep(4000);
+		clickOn("#tabFilter");
+		clickOn("#buttonSelectAll");
+		clickOn("#buttonSelectAll");
+		clickOn("#checkboxMonday");
 	}
 }
