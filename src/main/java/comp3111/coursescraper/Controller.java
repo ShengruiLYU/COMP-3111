@@ -205,6 +205,14 @@ public class Controller implements Initializable{
     	}
     }
     
+    private List<String> getEnrolledCourseCode() {
+    	List<String> result = new ArrayList<String>();
+    	for(int i = 0; i < myEnrolledCourseList.size(); i++) {
+    		String[] s = myEnrolledCourseList.get(i).split("\\-");
+    		result.add(s[0]);
+    	}
+    	return result;
+    }
     
     private void updateList() {
     	
