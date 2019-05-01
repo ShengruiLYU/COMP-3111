@@ -178,6 +178,7 @@ public class Controller implements Initializable{
     private List<String> myEnrolledCourseList = new ArrayList<String>();
     
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
+    private List<Label> slotList = new ArrayList<Label>();
     
     @FXML
     private void enrollUpdate() {
@@ -659,13 +660,13 @@ public class Controller implements Initializable{
 
 		List<Course> toDisplay = new ArrayList<Course>();
 		int upper_bound;
-		if (v.size()>18){
-			upper_bound = 18;
+		if (v.size()>5){
+			upper_bound = 5;
 		}
 		else 
 			upper_bound = v.size();
 		
-    	for (int i = 13; i< upper_bound; i++) {
+    	for (int i = 0; i< upper_bound; i++) {
     		toDisplay.add(v.get(i));
     	}
     	printTimeTable(toDisplay);
@@ -677,6 +678,8 @@ public class Controller implements Initializable{
     private void printTimeTable(List<Course> toDisplay) {
 		
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	ap.getChildren().removeAll(slotList);
+    	slotList.clear();
     	
     	List<List<Slot>> daySlots = new ArrayList<List<Slot>>();
     	
@@ -720,11 +723,14 @@ public class Controller implements Initializable{
 		    	randomLabel.setMinHeight(height);
 		    	randomLabel.setMaxHeight(height);
 		    	randomLabel.setOpacity(0.5);
+		    	slotList.add(randomLabel);
 		    
-		    	ap.getChildren().addAll(randomLabel);
+		    	
 			}
 	    	
 		}
+	
+		ap.getChildren().addAll(slotList);
     }
 
 	@FXML
