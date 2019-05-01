@@ -2,7 +2,7 @@ package comp3111.coursescraper;
 /**
  * 
  * 
- * A claas for representing time. it implement the compare function. And it can be coverted to a string representation.
+ * A class for representing time. it implements the compare function. And it can be converted to a string representation.
  */
 public class Time {
 	private String original;
@@ -16,6 +16,11 @@ public class Time {
 		minute = Integer.parseInt(s.substring(3, 5));
 	}
 	
+	/*
+	 * compares with time is later, which is earlier
+	 * @param a time object to be compared with the current one
+	 * @return 0 if equal, -1 if the conrent one is earlier, 1 if the new one is earlier
+	 */
 	public int compares(Time t) {
 		if (this.half>t.half){
 			return 1; // this object is larger
@@ -36,6 +41,10 @@ public class Time {
 		}
 	}
 	
+	/*
+	 * retrieve the data in original string format
+	 * @return the data in original string format
+	 */
 	public String getTime() {
 		return original;
 	}

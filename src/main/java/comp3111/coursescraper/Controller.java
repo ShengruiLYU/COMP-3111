@@ -56,11 +56,11 @@ import java.util.List;
  * printTimetable2() is for displaying the timeslots passed in on the timetable.
  * updateTimetable() will be called if timetable tab is clicked. It will fetech all the enrolled section list and display them.
  * checkBox() will update the filter selection and the console display whe the user change the filter options.
+ * printTimetable() is for displaying the courses passed in on the timetable.
  * checkFlag() will check whether a course will be put in the updated course list according to the filter options.
- * findInstructorSfq() find the sfq for the instructor
- * findSfqEnrollCourse() fin the sfq for the enrolled course
+ * findInstructorSfq() find the average sfq for the instructor
+ * findSfqEnrollCourse() find the average sfq scores for the enrolled course
  * selectAll() select all the checkboxes
- * enrollUpdate() will ..
  */
 public class Controller implements Initializable{
 
@@ -384,6 +384,9 @@ public class Controller implements Initializable{
     	
     }
     
+    /*
+    * update the filter selection and the console display whether the user change the filter options.
+    */
     private void updateCheckBox() {
     	
     	textAreaConsole.clear();
