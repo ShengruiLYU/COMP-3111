@@ -171,14 +171,29 @@ public class Controller implements Initializable{
     private TableColumn<CourseList, CheckBox> enroll;
     //private TableColumn<CourseList, String> enroll;
     
+    @FXML
+    private Button buttonEnroll;
+    
     private Scraper scraper = new Scraper();
     
     private static List<Course> myCourseList;
     private List<Course> myUpdatedCourseList;
     private List<String> myEnrolledCourseList = new ArrayList<String>();
+    private List<String> myDupCourseList = new ArrayList<String>();
     
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     private List<Label> slotList = new ArrayList<Label>();
+    
+    @FXML
+    void updateMyEnrollment() {
+    	enrollUpdate();
+    	textAreaConsole.clear();
+    	textAreaConsole.setText("My enrolled courses are:" + "\n");
+    	for(int i = 0; i < myEnrolledCourseList.size(); i++) {
+    		textAreaConsole.setText(textAreaConsole.getText()+myEnrolledCourseList.get(i)+"\n");
+    	}
+    	
+    }
     
     @FXML
     private void enrollUpdate() {
@@ -231,9 +246,14 @@ public class Controller implements Initializable{
     			CourseList currentChoice = new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor());
     			String currentID = tempL[0] + "-" +c.getSlot(i).getSectionCode();
     			
-    			if(myEnrolledCourseList.contains(currentID))
+    			if(myEnrolledCourseList.contains(currentID)) {
     				currentChoice.getEnroll().setSelected(true);
-    			
+    			}
+    			if(i > 0) {
+    				if(c.getSlot(i).getSectionCode().equals(c.getSlot(i-1).getSectionCode())) {
+    					continue;
+    				}
+    			}
     			listInTable.add(currentChoice);
     		}
     		
