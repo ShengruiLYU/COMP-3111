@@ -189,7 +189,7 @@ public class Controller implements Initializable{
     	//get the list of checked courses
     	//course code + section code = unique id
     	for(int i =0; i < tableListCourse.getItems().size(); i++) {
-    		String uniqueID = tableListCourse.getItems().get(i).getCourseCode() + tableListCourse.getItems().get(i).getSection();
+    		String uniqueID = tableListCourse.getItems().get(i).getCourseCode() + "-" + tableListCourse.getItems().get(i).getSection();
     		
     		if(tableListCourse.getItems().get(i).getEnroll().isSelected()) {
     			if(!(myEnrolledCourseList.contains(uniqueID))) {
@@ -220,7 +220,7 @@ public class Controller implements Initializable{
     		
     		for (int i = 0; i < c.getNumSlots(); i++) {
     			CourseList currentChoice = new CourseList(tempL[0], c.getSlot(i).getSectionCode(), tempL[1], c.getSlot(i).getInstructor());
-    			String currentID = tempL[0] + c.getSlot(i).getSectionCode();
+    			String currentID = tempL[0] + "-" +c.getSlot(i).getSectionCode();
     			
     			if(myEnrolledCourseList.contains(currentID))
     				currentChoice.getEnroll().setSelected(true);
