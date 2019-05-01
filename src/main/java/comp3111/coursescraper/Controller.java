@@ -296,7 +296,7 @@ public class Controller implements Initializable{
     	        	for (String subject : allSubject) {
     	        		System.out.println(subject+" starts");
     	        		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
-    	        		Controller.myCourseList = v;
+    	        		Controller.myCourseList.addAll(v);
     	        		String newline = "";
     	        		for (Course c : v) {
     	            		newline += c.getTitle() + "\n";
