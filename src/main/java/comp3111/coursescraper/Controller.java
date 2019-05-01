@@ -43,6 +43,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+/**
+ * 
+ * Controller class of the whole project.
+ * 
+ * It implements search function, all subject search function, timetable display funtion, find sfq function, course listing and enrollment function and course filtering function.
+ * All the following functions (exception initialization of the controller)are private, therefore they won't show in the javadoc. (Acoording to piazza Kevin's reply, we only show the public and protected functions)
+ * search() is for the search tab, click search button will call this function and display the search result in the ui console.
+ * allSubjectSearch() is for the all subject search tab, click all subject search buttion will display the all subject search result in the console and update progress bar.
+ * printTimetable() is for displaying the courses passed in on the timetable.
+ * checkBox() will update the filter selection and the console display whe the user change the filter options.
+ * checkFlag() will check whether a course will be put in the updated course list according to the filter options.
+ * findInstructorSfq() find the sfq for the instructor
+ * findSfqEnrollCourse() fin the sfq for the enrolled course
+ * selectAll() select all the checkboxes
+ * enrollUpdate() will ..
+ */
 public class Controller implements Initializable{
 
     @FXML
@@ -163,7 +179,7 @@ public class Controller implements Initializable{
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     
     @FXML
-    void enrollUpdate() {
+    private void enrollUpdate() {
     	myEnrolledCourseList.clear();
     	textAreaConsole.clear();
     	
@@ -197,7 +213,7 @@ public class Controller implements Initializable{
     }
     
     
-    void updateList() {
+    private void updateList() {
     	
     	this.listInTable.clear();
     	if(myUpdatedCourseList == null) {
@@ -227,10 +243,12 @@ public class Controller implements Initializable{
     	return;
     }
 
+	
 	@FXML
-    void allSubjectSearch() {
+    private void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
     	 final Task <Void> allSubjectThread = new Task <Void>() {
+    	    	
     	    	@Override
     	    	protected Void call() throws Exception {
     	    		System.out.println("start all subject thread");
@@ -273,7 +291,7 @@ public class Controller implements Initializable{
     }
 
     @FXML
-    void findInstructorSfq() {
+    private void findInstructorSfq() {
     	buttonInstructorSfq.setDisable(true); //
     	
     	// scrape the list from website
@@ -298,7 +316,7 @@ public class Controller implements Initializable{
     }
 
     @FXML
-    void findSfqEnrollCourse() {
+    private void findSfqEnrollCourse() {
     	// create dummy list of course strings, need to use results from task 4 later.
     	List<String> TMP_COURSES = new ArrayList<String>();
     	TMP_COURSES.add("COMP 2012");
@@ -331,7 +349,7 @@ public class Controller implements Initializable{
     	
     }
     
-    void updateCheckBox() {
+    private void updateCheckBox() {
     	
     	textAreaConsole.clear();
     	//if the course list is empty, there are 2 possibilities. And we need to update the list
@@ -470,7 +488,7 @@ public class Controller implements Initializable{
     	
     }
     
-    boolean checkFlag(int f1, int f2, int f3, int f4, int f5, int f6, int f7, int f8, int f9, int f10, int f11, 
+    private boolean checkFlag(int f1, int f2, int f3, int f4, int f5, int f6, int f7, int f8, int f9, int f10, int f11, 
     		int t1, int t2, int t3, int t4, int t5, int t6, int t7, int t8, int t9, int t10, int t11) {
     	if(f1>t1)
     		return false;
@@ -500,7 +518,7 @@ public class Controller implements Initializable{
     }
     
     @FXML
-    void selectAllBoxes() {
+    private void selectAllBoxes() {
     	if(buttonSelectAll.getText() != "De-select All") {
     		buttonSelectAll.setText("De-select All");
     		checkboxAM.setSelected(true);
@@ -537,64 +555,64 @@ public class Controller implements Initializable{
     
 
     @FXML
-    void checkAM() {
+    private void checkAM() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkCC() {
+    private void checkCC() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkFri() {
+    private void checkFri() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkMon() {
+    private void checkMon() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkNE() {
+    private void checkNE() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkPM() {
+    private void checkPM() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkSat() {
+    private void checkSat() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkThu() {
+    private void checkThu() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkTue() {
+    private void checkTue() {
     	updateCheckBox();
     }
 
     @FXML
-    void checkWLabTut() {
+    private void checkWLabTut() {
     	updateCheckBox();
     	
     }
 
     @FXML
-    void checkWed() {
+    private void checkWed() {
     	updateCheckBox();
     }
     
     
     @FXML
-    void search() {
+    private void search() {
     	buttonSfqEnrollCourse.setDisable(false);
     	textAreaConsole.setText("");// clear any console output legacies
     	Section.resetNumUnique(); // reset Section count
@@ -653,7 +671,7 @@ public class Controller implements Initializable{
    
     
     @FXML
-    void printTimeTable(List<Course> toDisplay) {
+    private void printTimeTable(List<Course> toDisplay) {
 		
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
     	

@@ -9,7 +9,11 @@ import java.util.HashSet;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
-
+/**
+ * 
+ * 
+ * Slot maintains all the information of a timeslot. A course may have multiple timeslot. And the time table displays the slots of enrolled courses.
+ */
 
 
 public class Slot {

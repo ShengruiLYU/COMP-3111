@@ -1,5 +1,10 @@
 package comp3111.coursescraper;
-
+/**
+ * 
+ * 
+ *
+ * Used for recording a section of a course.
+ */
 public class Section {
 	private String sectionCode;
 	private String sectionId;
