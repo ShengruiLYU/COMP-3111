@@ -1,7 +1,7 @@
 # COMP3111: Software Engineering Project - Course Scraper
 ## Activity 2 Task Assignment
-*1. LI Junrong: Task 3,4
-*2. LYU Shengrui: Task 2,5
+*1. LI Junrong: Task 2,3
+*2. LYU Shengrui: Task 4,5
 *3. WANG Yanbang: Task 1,6
 
 
