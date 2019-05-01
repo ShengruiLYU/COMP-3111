@@ -62,6 +62,9 @@ public class Controller {
 
     @FXML
     private Tab tabAllSubject;
+    
+    @FXML
+    private Button buttonAllSubjectSearch;
 
     @FXML
     private ProgressBar progressbar;
@@ -497,7 +500,14 @@ public class Controller {
     	//Print courses after search, to be removed if enrollment is done
 
 		List<Course> toDisplay = new ArrayList<Course>();
-    	for (int i = 13; i< 18; i++) {
+		int upper_bound;
+		if (v.size()>18){
+			upper_bound = 18;
+		}
+		else 
+			upper_bound = v.size();
+		
+    	for (int i = 13; i< upper_bound; i++) {
     		toDisplay.add(v.get(i));
     	}
     	printTimeTable(toDisplay);
