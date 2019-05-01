@@ -95,7 +95,7 @@
                         </AnchorPane>
                     </content>
                   </Tab>
-                  <Tab fx:id="tabTimetable" text="Timetable">
+                  <Tab fx:id="tabTimetable" onSelectionChanged="#updateTimetable" text="Timetable">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="412.0" prefWidth="719.0">
                            <children>
@@ -168,7 +168,7 @@
       </children>
     </AnchorPane>
       <Label text="Console" />
-      <Button fx:id="buttonEnroll" mnemonicParsing="false" onAction="#updateMyEnrollment" text="update enrollment" />
+      <Button fx:id="buttonEnroll" mnemonicParsing="false" onAction="#updateMyEnrollment" text="enroll" />
       <ScrollPane prefHeight="387.0" prefWidth="719.0">
          <content>
             <TextArea fx:id="textAreaConsole" prefHeight="300.0" prefWidth="717.0" />
