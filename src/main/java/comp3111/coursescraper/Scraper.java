@@ -128,7 +128,12 @@ public class Scraper {
 		}
 
 	}
-
+	
+	/*
+	 * scrape the list of courses
+	 * @param a string of base url
+	 * @return the list of courses
+	 */
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
@@ -231,6 +236,7 @@ public class Scraper {
 		return null;
 	}
 	
+
 	public List<String> scrapeSFQEnrolledCourses(String baseurl, List<String> enrolledCourses){
 		try {
 			//dummy url for testing
@@ -308,6 +314,11 @@ public class Scraper {
 		return null;
 	}
 	
+	/*
+	 * scrape the list of SFQInstructors
+	 * @param a string of base url
+	 * @return the list of SFQInstructors
+	 */
 	public List<String> scrapeSFQInstructors(String baseurl){
 		Map<String, Instructor> name_instructor_map = new HashMap<String, Instructor>();
 		try {
