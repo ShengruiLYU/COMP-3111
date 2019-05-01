@@ -3,7 +3,9 @@ package comp3111.coursescraper;
 
 import java.awt.event.ActionEvent;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -225,16 +227,50 @@ public class Controller implements Initializable{
 	@FXML
     void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
-    	progressbar.progressProperty().bind(allSubjectThread.progressProperty());
-    	final Thread ssthread = new Thread(allSubjectThread,"all subject search thread");
+    	 final Task <Void> allSubjectThread = new Task <Void>() {
+    	    	@Override
+    	    	protected Void call() throws Exception {
+    	    		System.out.println("start all subject thread");
+    	    		List<String> allSubject = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
+    	        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Categories/Code Prefix: " +allSubject.size());
+    	        	
+    	        	int totalNumOfCourses = 0;
+    	        	
+    	        	int subjectCount = 0;
+    	        	for (String subject : allSubject) {
+    	        		System.out.println(subject+" starts");
+    	        		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
+    	        		Controller.myCourseList = v;
+    	        		String newline = "";
+    	        		for (Course c : v) {
+    	            		newline += c.getTitle() + "\n";
+    	            		for (int i = 0; i < c.getNumSlots(); i++) {
+    	            			Slot t = c.getSlot(i);
+    	            			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
+    	            		}
+    	            		
+    	            	}
+    	        		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+    	        		totalNumOfCourses += v.size();
+    	        		subjectCount +=1;
+    	        		updateProgress(subjectCount+1,allSubject.size());
+    	        		
+    	        		System.out.println(subject+" is done");
+    	        	}
+    	        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " +totalNumOfCourses);
+    	    		return null;
+    	    	}
+    	    };
+    	    progressbar.progressProperty().bind(allSubjectThread.progressProperty());
+    	Thread ssthread = new Thread(allSubjectThread,"all subject search thread");
     	ssthread.setDaemon(true);
     	ssthread.start();
     	
+ 
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "starting all subject search");
     	
-    	
-    	
-    	
+			
+			
     	this.myUpdatedCourseList = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     }
 
@@ -609,39 +645,7 @@ public class Controller implements Initializable{
     	printTimeTable(toDisplay);
     	
     }
-    final Task <Void> allSubjectThread = new Task <Void>() {
-    	@Override
-    	protected Void call() throws Exception {
-    		List<String> allSubject = scraper.getAllSubjectName(textfieldURL.getText(), textfieldTerm.getText());
-        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Categories/Code Prefix: " +allSubject.size());
-        	
-        	int totalNumOfCourses = 0;
-        	
-        	int subjectCount = 0;
-        	for (String subject : allSubject) {
-        		System.out.println(subject+" starts");
-        		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), subject);
-        		Controller.myCourseList = v;
-        		String newline = "";
-        		for (Course c : v) {
-            		newline += c.getTitle() + "\n";
-            		for (int i = 0; i < c.getNumSlots(); i++) {
-            			Slot t = c.getSlot(i);
-            			newline += "Section " + t.getSectionCode() + " Slot " + i + ":" + t + "\n";
-            		}
-            		
-            	}
-        		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-        		totalNumOfCourses += v.size();
-        		subjectCount +=1;
-        		updateProgress(subjectCount+1,allSubject.size());
-        		
-        		System.out.println(subject+" is done");
-        	}
-        	textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " +totalNumOfCourses);
-    		return null;
-    	}
-    };
+   
     
     @FXML
     void printTimeTable(List<Course> toDisplay) {
@@ -723,6 +727,8 @@ public class Controller implements Initializable{
     	listInTable.add(new CourseList("N/A","N/A","N/A","N/A"));
     	tableListCourse.setItems(listInTable);
 	}
+	
+
 
 }
 
