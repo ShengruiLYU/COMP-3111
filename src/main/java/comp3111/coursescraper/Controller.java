@@ -180,6 +180,8 @@ public class Controller implements Initializable{
     private ObservableList<CourseList> listInTable = FXCollections.observableArrayList();
     private List<Label> slotList = new ArrayList<Label>();
     
+    private List<String> backUpList = new ArrayList<String>();
+    
     @FXML
     private void enrollUpdate() {
     	if(myUpdatedCourseList == null) {
@@ -330,16 +332,23 @@ public class Controller implements Initializable{
     	TMP_COURSES.add("CIVL 1100");
     	TMP_COURSES.add("LABU 1100");
     	TMP_COURSES.add("ELEC 1095A");
+    	
+    	enrollUpdate();
+    	List<String> REAL_COURSES = getEnrolledCourseCode();
     	// scrape the list from website
-    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), TMP_COURSES);
-    	textAreaConsole.setText(""); // clear the console for new output.
+    	List<String>results = scraper.scrapeSFQEnrolledCourses(textfieldSfqUrl.getText(), backUpList);
+    	textAreaConsole.setText("Task3 failed, using the first five courses...\n\n"); // clear the console for new output.
     	// handle 404 error (or other types of errors).
     	if (results == null) {
-			textAreaConsole.setText("Some errors occurred when scraping " + textfieldSfqUrl.getText());
+			textAreaConsole.setText(textAreaConsole.getText() + "Some errors occurred when scraping " + textfieldSfqUrl.getText());
+    	}
+    	
+    	else if (results.size()==0) {
+    		textAreaConsole.setText(textAreaConsole.getText() + "No courses are found.");
     	}
     	
     	else if (results.size()==1 & results.get(0).substring(0,13).equals("404 Not Found")) {
-			textAreaConsole.setText(results.get(0));
+			textAreaConsole.setText(textAreaConsole.getText() + results.get(0));
 			return;
 		}
     	else {
@@ -622,8 +631,9 @@ public class Controller implements Initializable{
     	Section.resetNumUnique(); // reset Section count
     	Course.resetNumValidUnique(); // reset Course count
     	Instructor.reset(); // reset instructor list
+    	backUpList.clear();
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	
+    	backUpList = convertToFirst5CourseCodes(v);
     	//added by jr, for use of filtering
     	this.myCourseList = v;
     	
@@ -763,6 +773,20 @@ public class Controller implements Initializable{
     	tableListCourse.setItems(listInTable);
 	}
 	
+	private List<String> convertToFirst5CourseCodes(List<Course> courses){
+		List<String> codes = new ArrayList<String>();
+		int count = 0;
+		for (Course course: courses) {
+			if (count >= 5)
+				break;
+			String code = course.getTitle().split("\\-")[0].trim();
+			if (codes.contains(code))
+				continue;
+			codes.add(code);
+			count += 1;
+		}
+		return codes;
+	}
 
 
 }
