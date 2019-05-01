@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 
 public class ItemTest {
 
+	// test Course class
 	@Test
 	public void testSetTitle() {
 		Course i = new Course();
@@ -43,4 +44,6 @@ public class ItemTest {
 		}
 		assertEquals(c.getNumSlots(), 20);
 	}
+	
+	//test Section
 }
