@@ -1,4 +1,4 @@
-## Course Scraper
+## Timetable Planner for College Students
 ## Task Assignment
 *1. LI Junrong: Task 2,3
 *2. LYU Shengrui: Task 4,5
